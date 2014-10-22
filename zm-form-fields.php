@@ -270,7 +270,7 @@ Class ZM_Form_Fields {
 
         $value = empty( $current_value ) ? $value : $current_value;
 
-        $html = '<p><input type="checkbox" name="'.$name.'" id="' . $input_id .'" value="1" ' . checked( 1, $value, false ) . '/>';
+        $html = '<p class="'.$row_class.'"><input type="checkbox" name="'.$name.'" id="' . $input_id .'" value="1" ' . checked( 1, $value, false ) . '/>';
         $html .= '<label for="' . $for . '_checkbox">' . $title . '</label></p>';
 
         if ( $echo )
@@ -320,6 +320,45 @@ Class ZM_Form_Fields {
         else
             return $row;
 
+    }
+
+
+    public function do_radio( $field, $current_form, $value ){
+
+        extract( $this->get_attributes( $field, $current_form ) );
+
+        if ( empty( $field['options'] ) )
+            return;
+
+        $value = empty( $current_value ) ? $value : $current_value;
+        $options = null;
+
+        foreach( $field['options'] as $k => $v ) {
+
+            $key = sanitize_title( $k );
+
+            $options .= '<input
+            type="radio"
+            class=""
+            name="'.$name.'"
+            id="' . $key . '"
+            value="' . $key . '" ' . checked( $key, $value, false ) . ' /><label for="' . $key . '">' . $v . '</label><br />';
+        }
+
+        $required = ( $req == true ) ? ' required ' : null;
+        $required_html = ( $req == true ) ? '<sup class="req">&#42;</sup>' : null;
+
+        $html  = '<p class="' . $row_class . '" id="' . $row_id . '">';
+        $html .= $required_html;
+        // $html .= '<select name="' . $name . '" ' . $required . '>';
+        $html .= $options;
+        // $html .= '</select>';
+        $html .= $desc;
+
+        if ( $echo )
+            echo $html;
+        else
+            return $html;
     }
 
 
@@ -457,6 +496,10 @@ Class ZM_Form_Fields {
 
                             case 'checkbox' :
                                 $html .= $this->do_checkbox( $field, $current_form, $value );
+                                break;
+
+                            case 'radio' :
+                                $html .= $this->do_radio( $field, $current_form, $value );
                                 break;
 
                             case 'upload' :
