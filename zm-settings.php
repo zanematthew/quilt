@@ -224,7 +224,7 @@ Class ZM_Settings Extends ZM_Form_Fields {
      */
     public function admin_menu(){
 
-        $sub_menu_pages = array(
+        $sub_menu_pages = apply_filters( $this->namespace . '_admin_submenu', array(
             array(
                 'parent_slug' => 'options-general.php',
                 'page_title' => __( 'ZM Settings', $this->namespace  ),
@@ -233,7 +233,7 @@ Class ZM_Settings Extends ZM_Form_Fields {
                 'menu_slug' => $this->namespace,
                 'function' => 'load_template'
                 )
-            );
+            ) );
 
         foreach( $sub_menu_pages as $sub_menu ){
             add_submenu_page(
