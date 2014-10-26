@@ -336,13 +336,9 @@ Class ZM_Form_Fields {
         foreach( $field['options'] as $k => $v ) {
 
             $key = sanitize_title( $k );
+            $id = $input_id . '_' . $key;
 
-            $options .= '<input
-            type="radio"
-            class=""
-            name="'.$name.'"
-            id="' . $key . '"
-            value="' . $key . '" ' . checked( $key, $value, false ) . ' /><label for="' . $key . '">' . $v . '</label><br />';
+            $options .= '<input type="radio" class="" name="'.$name.'" id="' . $id . '" value="' . $key . '" ' . checked( $key, $value, false ) . ' /><label for="' . $id . '">' . $v . '</label><br />';
         }
 
         $required = ( $req == true ) ? ' required ' : null;
@@ -361,7 +357,6 @@ Class ZM_Form_Fields {
             return $html;
     }
 
-
     public function get_attributes( $field=null, $current_form=null ){
 
         // Other people can override the name, by passing it in with the field
@@ -374,7 +369,7 @@ Class ZM_Form_Fields {
             'placeholder' => empty( $field['placeholder'] ) ? null : $field['placeholder'],
             'row_class' => ( empty( $field['extra_class'] ) ) ? 'zm-form-default-row' : 'zm-form-default-row ' . $field['extra_class'],
             'row_id' => 'zm_form_' . $current_form . '_' . $field['id'] . '_row',
-            'input_id' => $field['id'],
+            'input_id' => $current_form . '_' . $field['id'],
             'req' => empty( $field['req'] ) ? null : $field['req'],
             'desc' => empty( $field['desc'] ) ? null : $field['desc'],
             'echo' => empty( $field['echo'] ) ? false : true,
