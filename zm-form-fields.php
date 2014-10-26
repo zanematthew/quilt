@@ -571,6 +571,7 @@ Class ZM_Form_Fields {
             }
         }
 
+        do_action( 'zm_form_' . $current_form . '_before_save_meta', $post_id, $meta );
         return update_post_meta( $post_id, '_zm_form_meta', $sanitized );
     }
 
