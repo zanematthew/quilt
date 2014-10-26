@@ -28,6 +28,28 @@ Class ZM_Form_Fields {
     }
 
 
+    public function do_hidden( $field=null, $current_form=null, $value=null ){
+
+        extract( $this->get_attributes( $field, $current_form ) );
+
+        $value = empty( $current_value ) ? $value : $current_value;
+
+        $required = ( $req == true ) ? ' required ' : null;
+        $required_html = ( $req == true ) ? '<sup class="req">&#42;</sup>' : null;
+
+        $row  = '<p class="' . $row_class . '" id="' . $row_id . '">';
+        $row .= '<label for="' . $for . '">' . $title . '</label>';
+        $row .= $required_html;
+        $row .= '<input type="text" id="' . $input_id . '" name="' . $name . '" value="' . esc_attr( $value ) . '" placeholder="' . $placeholder . '" size="25" ' . $required . ' ' . $style . '/>';
+        $row .= '</p>';
+
+        if ( $echo )
+            echo $row;
+        else
+            return $row;
+    }
+
+
     public function do_url( $field=null, $current_form=null, $value=null ){
 
         extract( $this->get_attributes( $field, $current_form ) );
@@ -373,7 +395,8 @@ Class ZM_Form_Fields {
             'req' => empty( $field['req'] ) ? null : $field['req'],
             'desc' => empty( $field['desc'] ) ? null : $field['desc'],
             'echo' => empty( $field['echo'] ) ? false : true,
-            'current_value' => empty( $field['value'][ $field['id'] ] ) ? null : $field['value'][ $field['id'] ]
+            'current_value' => empty( $field['value'][ $field['id'] ] ) ? null : $field['value'][ $field['id'] ],
+            'style' => empty( $field['style'] ) ? null : $field['style'],
             );
         return $attr;
     }
@@ -495,6 +518,10 @@ Class ZM_Form_Fields {
 
                             case 'radio' :
                                 $html .= $this->do_radio( $field, $current_form, $value );
+                                break;
+
+                            case 'hidden' :
+                                $html .= $this->do_hidden( $field, $current_form, $value );
                                 break;
 
                             case 'upload' :
