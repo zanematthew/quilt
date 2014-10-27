@@ -379,6 +379,44 @@ Class ZM_Form_Fields {
             return $html;
     }
 
+
+    public function do_html( $field=null, $current_form=null ){
+
+        extract( $this->get_attributes( $field, $current_form ) );
+
+        $row  = '<p class="' . $row_class . '" id="' . $row_id . '">';
+        $row .= '<label for="' . $for . '">' . $title . '</label>';
+        $row .= $std;
+        $row .= '</p>';
+
+        if ( $echo )
+            echo $row;
+        else
+            return $row;
+    }
+
+
+    public function do_thickbox_url( $field=null, $current_form=null, $value=null ){
+
+        extract( $this->get_attributes( $field, $current_form ) );
+
+        // var_dump($placeholder); // for title of hidden content
+        // var_dump($std); // for URL
+
+        add_thickbox();
+
+        $row  = '<p class="' . $row_class . '" id="' . $row_id . '">';
+        $row .= '<label for="' . $for . '">' . $title . '</label>';
+        $row .= '<a href="' . esc_url( $std ) . '&TB_iframe=true&width=600&height=550" class="thickbox">' . $placeholder . '</a>';
+        $row .= '</p>';
+
+        if ( $echo )
+            echo $row;
+        else
+            return $row;
+    }
+
+
     public function get_attributes( $field=null, $current_form=null ){
 
         // Other people can override the name, by passing it in with the field
@@ -397,6 +435,7 @@ Class ZM_Form_Fields {
             'echo' => empty( $field['echo'] ) ? false : true,
             'current_value' => empty( $field['value'][ $field['id'] ] ) ? null : $field['value'][ $field['id'] ],
             'style' => empty( $field['style'] ) ? null : $field['style'],
+            'std' => empty( $field['std'] ) ? null : $field['std'],
             );
         return $attr;
     }
@@ -528,9 +567,17 @@ Class ZM_Form_Fields {
                                 $html .= $this->do_upload( $field, $current_form, $value );
                                 break;
 
+                            case 'html' :
+                                $html .= $this->do_html( $field, $current_form );
+                                break;
+
+                            case 'thickbox_url' :
+                                $html .= $this->do_thickbox_url( $field, $current_form, $value );
+                                break;
+
                             default:
                                 $html .= $this->do_text( $field, $current_form, $value );
-                            break;
+                                break;
                         }
 
                     endforeach;
