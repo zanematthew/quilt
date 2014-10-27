@@ -10,12 +10,14 @@ Class ZM_Settings Extends ZM_Form_Fields {
      *
      * @since 1.0.0
      */
-    public function __construct( $namespace ){
+    public function __construct( $namespace, $paths ){
 
         $this->namespace = $namespace;
+        $this->dir_url = $paths['dir_url'];
 
         add_action( 'admin_menu', array( &$this, 'admin_menu' ) );
         add_action( 'admin_init', array( &$this, 'register_settings' ) );
+        add_action( 'admin_enqueue_scripts', array( &$this, 'admin_enqueue_scripts') );
     }
 
 
@@ -194,16 +196,17 @@ Class ZM_Settings Extends ZM_Form_Fields {
                     $this->namespace . '_' . $id, // Page
                     $this->namespace . '_' . $id, // Section
                     array(
-                        'echo'    => true,
-                        'id'      => isset( $field['id'] ) ? $field['id'] : null,
-                        'desc'    => ! empty( $field['desc'] ) ? $field['desc'] : '',
+                        'echo'        => true,
+                        'id'          => isset( $field['id'] ) ? $field['id'] : null,
+                        'desc'        => ! empty( $field['desc'] ) ? $field['desc'] : '',
                         // Since we don't want the extended form class to derive names, we specify our names
-                        'name'    => $this->namespace . '[' . $field['id'] . ']', // ushyee_settings[my_checkbox_id]
-                        'value'   => $options,
-                        'section' => $id,
-                        'size'    => isset( $field['size'] ) ? $field['size'] : null,
-                        'options' => isset( $field['options'] ) ? $field['options'] : '',
-                        'std'     => isset( $field['std'] ) ? $field['std'] : ''
+                        'name'        => $this->namespace . '[' . $field['id'] . ']', // ushyee_settings[my_checkbox_id]
+                        'value'       => $options,
+                        'section'     => $id,
+                        'size'        => isset( $field['size'] ) ? $field['size'] : null,
+                        'options'     => isset( $field['options'] ) ? $field['options'] : '',
+                        'std'         => isset( $field['std'] ) ? $field['std'] : '',
+                        'placeholder' => isset( $field['placeholder'] ) ? $field['placeholder'] : ''
                     ) // These are extra params based into our function/method
                 );
             }
@@ -455,6 +458,7 @@ Class ZM_Settings Extends ZM_Form_Fields {
         echo '<p>' . $args['desc'] . '</p>';
     }
 
+
     // @todo finish this one
     public function touchtime_callback( $args ){
 
@@ -521,5 +525,13 @@ Class ZM_Settings Extends ZM_Form_Fields {
         }
         $html .= '<label for="' . $this->namespace . '[' . $args['id'] . ']"> '  . $args['desc'] . '</label>';
         echo $html;
+    }
+
+
+    public function admin_enqueue_scripts(){
+        $screen = get_current_screen();
+        if ( $screen->id == 'settings_page_' . $this->namespace ){
+            wp_enqueue_style( 'zm-settings-admin-script', $this->dir_url . 'assets/stylesheets/admin.css', '', '1.0' );
+        }
     }
 }
