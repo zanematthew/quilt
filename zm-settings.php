@@ -301,7 +301,7 @@ Class ZM_Settings Extends ZM_Form_Fields {
                 </table>
                 <hr >
 
-                <p class="description"><?php echo apply_filters( "{$this->namespace}_page_footer", 'Thank you for using the ZM Settings API.' ); ?></p>
+                <p class="description"><?php echo apply_filters( "{$this->namespace}_settings_footer", 'Thank you for using the ZM Settings API.' ); ?></p>
 
                 <?php submit_button(); ?>
             </form>
