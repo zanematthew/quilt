@@ -700,11 +700,5 @@ Class ZM_Form_Fields {
         <?php echo $this->get_meta_fields_html( $post->ID, $post->post_type ); ?>
     <?php }
 
-
-    public function get_meta( $post_id=null, $key=null ){
-        $meta = maybe_unserialize( get_post_meta( $post_id,  $this->meta_key , true ) );
-        return empty( $meta[ $key ]['value'] ) ? false : $meta[ $key ]['value'];
-    }
-
 }
 endif;
