@@ -28,7 +28,7 @@ Class ZM_Form_Fields {
         $row  = '<p class="' . $row_class . '" id="' . $row_id . '">';
         $row .= '<label for="' . $for . '">' . $title . '</label>';
         $row .= $required_html;
-        $row .= '<input type="text" id="' . $input_id . '" name="' . $name . '" value="' . esc_attr( $value ) . '" placeholder="' . $placeholder . '" size="25" ' . $required . '/>';
+        $row .= '<input type="text" id="' . $input_id . '" name="' . $name . '" value="' . esc_attr( $value ) . '" placeholder="' . $placeholder . '" size="25" ' . $required . ' class="large-text ' . $field_class .'" />';
         $row .= '</p>';
 
         if ( $echo )
@@ -344,7 +344,7 @@ Class ZM_Form_Fields {
         $value = empty( $current_value ) ? $value : $current_value;
 
         $html  = '<p class="' . $row_class . '" id="' . $row_id . '"><label for="' . $for . '">' . $title . '</label>';
-        $html .= '<textarea name="' . $name . '" rows="'.$rows.'" cols="" class="'.$field_class.'" placeholder="' . $placeholder . '">' . esc_textarea( $value ) . '</textarea>';
+        $html .= '<textarea name="' . $name . '" rows="'.$rows.'" cols="" class="large-text '.$field_class.'" placeholder="' . $placeholder . '">' . esc_textarea( $value ) . '</textarea>';
         $html .= '<p class="description">'.$desc.'</p>';
         $html .= '</p>';
 
