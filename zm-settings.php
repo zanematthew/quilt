@@ -1,7 +1,7 @@
 <?php
 
 
-require dirname( __FILE__ ) . '/zm-form-fields.php';
+require_once dirname( __FILE__ ) . '/zm-form-fields.php';
 
 Class ZM_Settings Extends ZM_Form_Fields {
 
@@ -183,8 +183,6 @@ Class ZM_Settings Extends ZM_Form_Fields {
                 $name = isset( $field['id'] ) ? $field['id'] : '';
                 $title = isset( $field['title'] ) ? $field['title'] : '';
 
-                // echo "method: do_" . $field['type'] . '<br >';
-
                 add_settings_field(
                     $this->namespace.'[' . $field['id'] . ']', // ID
                     $title,
@@ -206,7 +204,9 @@ Class ZM_Settings Extends ZM_Form_Fields {
                         'size'        => isset( $field['size'] ) ? $field['size'] : null,
                         'options'     => isset( $field['options'] ) ? $field['options'] : '',
                         'std'         => isset( $field['std'] ) ? $field['std'] : '',
-                        'placeholder' => isset( $field['placeholder'] ) ? $field['placeholder'] : ''
+                        'placeholder' => isset( $field['placeholder'] ) ? $field['placeholder'] : '',
+                        'field_class' => isset( $field['field_class'] ) ? $field['field_class'] : '',
+                        'rows'        => isset( $field['rows'] ) ? $field['rows'] : ''
                     ) // These are extra params based into our function/method
                 );
             }
@@ -373,8 +373,6 @@ Class ZM_Settings Extends ZM_Form_Fields {
      */
     public function sanitize( $input=array() ){
 
-        $options = $this->get_options();
-
         if ( empty( $_POST['_wp_http_referer'] ) )
             return;
 
@@ -382,29 +380,44 @@ Class ZM_Settings Extends ZM_Form_Fields {
 
         $settings = $this->settings();
         $tab      = isset( $referrer['tab'] ) ? $referrer['tab'] : null;
-
         $input = $input ? $input : array();
-        $input = apply_filters( $this->namespace . '_' . $tab . '_sanitize', $input );
 
-        // Loop through each setting being saved and pass it through a sanitization filter
-        foreach( $input as $key => $value ){
-            if ( empty( $settings[ $tab ]['fields'] ) ){
-            //     echo "missing: {$tab}<br />";
-            } else {
-                foreach( $settings[ $tab ]['fields'] as $field ){
-                    $type = $field['type'];
-                    // Type specific filter
-                    $input[ $tab ] = apply_filters( $this->namespace . '_' . $type . '_sanitize', $value, $tab );
+        foreach( $settings[ $tab ]['fields'] as $field ){
+
+            $key = $field['id'];
+            $value = $input[ $field['id'] ];
+            $type = $field['type'];
+
+            if ( array_key_exists( $key, $input ) ){
+                switch( $type ) {
+                    case 'select' :
+                    case 'multiselect' :
+                    case 'us_state' :
+                    case 'textarea' :
+                    case 'textarea_email_template' :
+                    case 'checkbox' :
+                    case 'radio' :
+                        $input[ $key ] = $this->sanitize_default( $value );
+                        break;
+
+                    case 'textarea_emails' :
+                        $input[ $key ] = $this->sanitize_textarea_emails( $value );
+                        break;
+
+                    default:
+                        $input[ $key ] = $this->sanitize_default( $value );
+                        break;
                 }
+                $input[ $key ] = apply_filters( $this->namespace . '_sanitize_' . $type, $input[ $key ] );
             }
 
-            // field specific filter
-            $input[ $key ] = apply_filters( $this->namespace . '_' . $key . '_sanitize', $value );
+            // sanitize by key here via filter
+            $input[ $key ] = apply_filters( $this->namespace . '_sanitize_' . $key, $input[ $key ] );
         }
 
-
         // Loop through the whitelist and unset any that are empty for the tab being saved
-        if ( ! empty( $settings[$tab] ) ) {
+        $options = $this->get_options();
+        if ( ! empty( $settings[ $tab ] ) ) {
             foreach ( $settings[ $tab ]['fields'] as $field ) {
                 $key = $field['id'];
                 if ( empty( $input[ $key ] ) ) {
@@ -417,6 +430,67 @@ Class ZM_Settings Extends ZM_Form_Fields {
         $output = array_merge( $options, $input );
 
         return $output;
+    }
+
+
+    public function sanitize_default( $value=null ){
+        return esc_attr( $value );
+    }
+
+
+    /**
+     * This takes an array of "stuff" determines in it what are valid
+     * emails and returns all the emails separated by a new line. For
+     * use in a textarae.
+     *
+     * @since 1.1
+     * @param $emails An array of emails to validate
+     * @return Validated emails separated by a new line (for use in a textarea)
+     */
+    public function sanitize_validate_emails( $emails=null ){
+        $valid_emails = array();
+        foreach( $emails as $email ){
+            $sanitized = sanitize_email( $email );
+            if ( $sanitized ){
+                $valid_emails[] = $sanitized;
+            }
+        }
+
+        $valid_emails = implode(PHP_EOL, $valid_emails);
+        return $valid_emails;
+    }
+
+
+    /**
+     * Takes everything that is in our textarea and creates an array
+     * based on new lines and blank spaces.
+     *
+     * @since 1.1
+     * @param $input (string) The input being saved
+     * @return Sanitized email addresses that are separated by a blank line.
+     */
+    public function sanitize_textarea_emails( $input ){
+        // Explode on new lines, remove blank spaces, convert to array, then re-index
+        $input = array_values( array_filter( explode( PHP_EOL, $input ), 'trim' ) );
+        $emails = array();
+
+        // validate each email
+        foreach( $input as $value ){
+
+            // check for ones that are NOT on a new line, but have a space
+            $pos = strpos( $value, ' ' );
+            if ( $pos !== false ){
+                $more_values = explode( ' ', $value );
+                foreach( $more_values as $more_value ){
+                    $emails[] = $more_value;
+                }
+            } else {
+                $emails[] = $value;
+            }
+
+        }
+
+        return $this->sanitize_validate_emails( $emails );
     }
 
 
