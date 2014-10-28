@@ -6,6 +6,16 @@
 if ( ! class_exists( 'ZM_Form_Fields' ) ) :
 Class ZM_Form_Fields {
 
+    /**
+     *
+     * @since 1.0
+     *
+     * @param $field
+     * @param $current_form
+     * @param $value
+     *
+     * @return
+     */
     public function do_text( $field=null, $current_form=null, $value=null ){
 
         extract( $this->get_attributes( $field, $current_form ) );
@@ -28,6 +38,16 @@ Class ZM_Form_Fields {
     }
 
 
+    /**
+     *
+     * @since 1.0
+     *
+     * @param $field
+     * @param $current_form
+     * @param $value
+     *
+     * @return
+     */
     public function do_hidden( $field=null, $current_form=null, $value=null ){
 
         extract( $this->get_attributes( $field, $current_form ) );
@@ -50,6 +70,16 @@ Class ZM_Form_Fields {
     }
 
 
+    /**
+     *
+     * @since 1.0
+     *
+     * @param $field
+     * @param $current_form
+     * @param $value
+     *
+     * @return
+     */
     public function do_url( $field=null, $current_form=null, $value=null ){
 
         extract( $this->get_attributes( $field, $current_form ) );
@@ -72,6 +102,14 @@ Class ZM_Form_Fields {
     }
 
 
+    /**
+     *
+     * @since 1.0
+     *
+     * @param $field
+     *
+     * @return
+     */
     public function do_open_fieldset( $field=array() ){
 
         extract( $this->get_attributes( $field ) );
@@ -82,11 +120,25 @@ Class ZM_Form_Fields {
     }
 
 
+    /**
+     *
+     * @since 1.0
+     *
+     *
+     * @return
+     */
     public function do_end_fieldset(){
         return '</fieldset></div>';
     }
 
 
+    /**
+     *
+     * @since 1.0
+     *
+     *
+     * @return
+     */
     public function do_open_section( $field=array() ){
 
         extract( $this->get_attributes( $field ) );
@@ -96,13 +148,25 @@ Class ZM_Form_Fields {
     }
 
 
+    /**
+     *
+     * @since 1.0
+     *
+     *
+     * @return
+     */
     public function do_end_section(){
         return '</div>';
     }
 
 
     /**
-     * @todo move to DI
+     *
+     * @since 1.0
+     *
+     * do_select( $field=array(), $current_form=null, $value=null
+     *
+     * @return
      */
     public function do_select( $field=array(), $current_form=null, $value=null ){
 
@@ -135,6 +199,14 @@ Class ZM_Form_Fields {
     }
 
 
+    /**
+     *
+     * @since 1.0
+     *
+     * do_multiselect( $field=array(), $current_form=null, $value=null
+     *
+     * @return
+     */
     public function do_multiselect( $field=array(), $current_form=null, $value=null ){
         extract( $this->get_attributes( $field, $current_form ) );
 
@@ -168,6 +240,14 @@ Class ZM_Form_Fields {
     }
 
 
+    /**
+     *
+     * @since 1.0
+     *
+     * do_us_state_select( $field=array(), $current_form=null, $value=null
+     *
+     * @return
+     */
     public function do_us_state_select( $field=array(), $current_form=null, $value=null ){
         $states = array(
             'AL' => 'Alabama',
@@ -248,6 +328,14 @@ Class ZM_Form_Fields {
     }
 
 
+    /**
+     *
+     * @since 1.0
+     *
+     * do_textarea( $field=array(), $current_form=null, $value=null
+     *
+     * @return
+     */
     public function do_textarea( $field=array(), $current_form=null, $value=null ){
 
         extract( $this->get_attributes( $field, $current_form ) );
@@ -267,6 +355,14 @@ Class ZM_Form_Fields {
     }
 
 
+    /**
+     *
+     * @since 1.0
+     *
+     * do_css_textarea( $field=array(), $current_form=null, $value=null
+     *
+     * @return
+     */
     public function do_css_textarea( $field=array(), $current_form=null, $value=null ){
 
         extract( $this->get_attributes( $field, $current_form ) );
@@ -286,10 +382,27 @@ Class ZM_Form_Fields {
     }
 
 
+    /**
+     *
+     * @since 1.0
+     *
+     * do_textarea_emails( $field=array(), $current_form=null, $value=null
+     *
+     * @return
+     */
     public function do_textarea_emails( $field=array(), $current_form=null, $value=null ){
         return $this->do_textarea( $field, $current_form, $value );
     }
 
+
+    /**
+     *
+     * @since 1.0
+     *
+     * do_checkbox( $field=array(), $current_form=null, $value=null
+     *
+     * @return
+     */
     public function do_checkbox( $field=array(), $current_form=null, $value=null ){
 
         extract( $this->get_attributes( $field, $current_form ) );
@@ -306,6 +419,14 @@ Class ZM_Form_Fields {
     }
 
 
+    /**
+     *
+     * @since 1.0
+     *
+     * do_upload( $field=array(), $current_form=null, $value=null
+     *
+     * @return
+     */
     public function do_upload( $field=array(), $current_form=null, $value=null ){
 
         wp_enqueue_media();
@@ -348,6 +469,13 @@ Class ZM_Form_Fields {
     }
 
 
+    /**
+     *
+     * @since 1.0
+     *
+     *
+     * @return
+     */
     public function do_radio( $field, $current_form, $value ){
 
         extract( $this->get_attributes( $field, $current_form ) );
@@ -383,6 +511,14 @@ Class ZM_Form_Fields {
     }
 
 
+    /**
+     *
+     * @since 1.0
+     *
+     * do_html( $field=null, $current_form=null
+     *
+     * @return
+     */
     public function do_html( $field=null, $current_form=null ){
 
         extract( $this->get_attributes( $field, $current_form ) );
@@ -399,6 +535,13 @@ Class ZM_Form_Fields {
     }
 
 
+    /**
+     *
+     * @since 1.0
+     *
+     * do_thickbox_url( $field=null, $current_form=null, $value=null
+     * @return
+     */
     public function do_thickbox_url( $field=null, $current_form=null, $value=null ){
 
         extract( $this->get_attributes( $field, $current_form ) );
@@ -420,6 +563,18 @@ Class ZM_Form_Fields {
     }
 
 
+    /**
+     * Builds an array of all possible HTML attributes for a given form field.
+     *
+     * @since   1.0
+     *
+     * @param   $field (array) The field containing an array of values
+     * @param   $current_form (string) Given post type
+     *
+     * @todo    use wp_parse_args()
+     *
+     * @return  HTML attributes for a given form field.
+     */
     public function get_attributes( $field=null, $current_form=null ){
 
         // Other people can override the name, by passing it in with the field
@@ -446,6 +601,14 @@ Class ZM_Form_Fields {
     }
 
 
+    /**
+     * Gets an array of all the available form fields. Containing
+     * id, type, title, etc.
+     *
+     * @since 1.0
+     *
+     * @return An array of all available fields.
+     */
     public function get_fields(){
         // Our default fields
         $default_fields = array(
@@ -478,23 +641,29 @@ Class ZM_Form_Fields {
     }
 
 
-    // i.e., form or post types
-    // as of now these are passed in as post types
+    /**
+     * Sets up an empty array to retrieve all available forms
+     * via a filter.
+     *
+     * @since 1.0
+     *
+     * @return  An array of all available forms
+     */
     public function get_forms(){
-        // $forms = array(
-        //     array(
-        //         'post_type' => null,
-        //         'name' => null,
-        //         'label' => null
-        //     )
-        // );
-
-        $forms = array();
-
-        return apply_filters( 'zm_form_add_new', $forms );
+        return apply_filters( 'zm_form_add_new', array() );
     }
 
-    // get our meta values for a given post_type
+
+    /**
+     * Get our meta values for a given post_type
+     *
+     * @since   1.0
+     *
+     * @param   $post_id The post id.
+     * @param   $key The key to retrieve the value for.
+     *
+     * @return
+     */
     public function get_values( $post_id=null, $key=null ){
         $post_meta = get_post_meta( $post_id, '_zm_form_meta', true );
         if ( empty( $key ) ){
@@ -507,6 +676,18 @@ Class ZM_Form_Fields {
     }
 
 
+    /**
+     * Builds the markup needed for each form field based on the field type.
+     *
+     * @since   1.0
+     *
+     * @param   $post_id The post id
+     * @param   $current_form The form, i.e., post type
+     *
+     * @todo    Move this switch to its on method of available field types.
+     *
+     * @return  The HTML form fields for the given form.
+     */
     public function get_meta_fields_html( $post_id=null, $current_form=null ){
 
         $meta = $this->get_values( $post_id );
@@ -598,11 +779,21 @@ Class ZM_Form_Fields {
     }
 
 
-    // merge the meta fields with that of the current form,
-    // this allows us to get add additional data to the fields.
-    // Essentially we are going from this:
-    // array( 'first_name' ); to
-    // array( 'first_name' => array( 'type' => 'text', 'id' => etc. ) )
+
+    /**
+     * Merge the meta fields with that of the current form,
+     * this allows us to get add additional data to the fields.
+     * Essentially we are going from this:
+     * array( 'first_name' ); to
+     * array( 'first_name' => array( 'type' => 'text', 'id' => etc. ) )
+     *
+     * @since 1.0
+     *
+     * @param   $meta The meta fields we are merging with
+     * @param   $current_form The current form, i.e., post type
+     *
+     * @return  An array of formated meta fields, array( 'first_name' => array( 'type' => 'text', 'id' => etc. ) )
+     */
     public function get_formatted_meta( $meta=null, $current_form=null ){
         $fields = $this->get_fields();
         $current_form_fields = $fields[ $current_form ];
@@ -618,7 +809,18 @@ Class ZM_Form_Fields {
     }
 
 
-    // saves form meta
+    /**
+     * Saves ALL post meta to a single serialized value "_zm_form_meta"
+     *
+     * @since 1.0
+     *
+     * @param    $post_id The post id
+     * @param    $meta The values being saved
+     * @param    $current_form The post type of the form or a unique key. This
+     *           is only used for the available hooks.
+     *
+     * @return
+     */
     public function save_meta( $post_id=null, $meta=null, $current_form=null ){
         $formatted_meta = $this->get_formatted_meta( $meta, $current_form );
         $multi_value = null;
@@ -655,8 +857,18 @@ Class ZM_Form_Fields {
     }
 
 
-    // default
-    // to override this just create a method called 'sanitize' in the child class
+    /**
+     * Sanitize form a form field value.
+     *
+     * @since 1.0
+     *
+     * @param   $type The field type being sanitized, i.e., text, radio, checkbox, etc.
+     *          see get_meta_fields_html() for full list.
+     * @param   $value The value to sanitize
+     * @todo    Merge this with the ZM_Settings sanitize methods?
+     *
+     * @return  Sanitized value
+     */
     public function sanitize( $type=null, $value=null ){
         switch ( $type ) {
             case 'textarea':
@@ -692,6 +904,16 @@ Class ZM_Form_Fields {
     }
 
 
+    /**
+     * Prints the meta fields, i.e., form fields
+     *
+     * @since   1.0
+     * @uses    get_meta_fields_html()
+     * @param   $post (object) The global post object
+     * @todo    Move in-line CSS to style sheet?
+     *
+     * @return
+     */
     public function meta_fields( $post ){ ?>
         <?php wp_nonce_field( 'zm_form_meta_box', 'zm_form_meta_box_nonce' ); ?>
         <style type="text/css">
