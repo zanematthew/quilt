@@ -1,0 +1,1 @@
+* Form fields sanitize and settings sanitize need to be their own class
