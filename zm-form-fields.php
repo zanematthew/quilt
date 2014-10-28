@@ -256,8 +256,8 @@ Class ZM_Form_Fields {
         $value = empty( $current_value ) ? $value : $current_value;
 
         $html  = '<p class="' . $row_class . '" id="' . $row_id . '"><label for="' . $for . '">' . $title . '</label>';
-        $html .= '<textarea name="' . $name . '" placeholder="' . $placeholder . '">' . esc_textarea( $value ) . '</textarea>';
-        $html .= $desc;
+        $html .= '<textarea name="' . $name . '" rows="'.$rows.'" cols="" class="'.$field_class.'" placeholder="' . $placeholder . '">' . esc_textarea( $value ) . '</textarea>';
+        $html .= '<p class="description">'.$desc.'</p>';
         $html .= '</p>';
 
         if ( $echo )
@@ -285,6 +285,10 @@ Class ZM_Form_Fields {
             return $html;
     }
 
+
+    public function do_textarea_emails( $field=array(), $current_form=null, $value=null ){
+        return $this->do_textarea( $field, $current_form, $value );
+    }
 
     public function do_checkbox( $field=array(), $current_form=null, $value=null ){
 
@@ -341,7 +345,6 @@ Class ZM_Form_Fields {
             echo $row;
         else
             return $row;
-
     }
 
 
@@ -428,6 +431,7 @@ Class ZM_Form_Fields {
             'name' => empty( $field['name'] ) ? $name : $field['name'],
             'placeholder' => empty( $field['placeholder'] ) ? null : $field['placeholder'],
             'row_class' => ( empty( $field['extra_class'] ) ) ? 'zm-form-default-row' : 'zm-form-default-row ' . $field['extra_class'],
+            'field_class' => ( empty( $field['field_class'] ) ) ? '' : $field['field_class'],
             'row_id' => 'zm_form_' . $current_form . '_' . $field['id'] . '_row',
             'input_id' => $current_form . '_' . $field['id'],
             'req' => empty( $field['req'] ) ? null : $field['req'],
@@ -436,6 +440,7 @@ Class ZM_Form_Fields {
             'current_value' => empty( $field['value'][ $field['id'] ] ) ? null : $field['value'][ $field['id'] ],
             'style' => empty( $field['style'] ) ? null : $field['style'],
             'std' => empty( $field['std'] ) ? null : $field['std'],
+            'rows' => empty( $field['rows'] ) ? null : $field['rows'],
             );
         return $attr;
     }
@@ -532,7 +537,12 @@ Class ZM_Form_Fields {
                                 break;
 
                             case 'textarea' :
+                            case 'textarea_email_template' :
                                 $html .= $this->do_textarea( $field, $current_form, $value );
+                                break;
+
+                            case 'textarea_emails' :
+                                $html .= $this->do_textarea_emails( $field, $current_form, $value );
                                 break;
 
                             case 'open_fieldset' :
