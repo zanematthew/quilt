@@ -1,8 +1,6 @@
 <?php
 
 
-require_once dirname( __FILE__ ) . '/zm-form-fields.php';
-
 Class ZM_Settings Extends ZM_Form_Fields {
 
     /**
