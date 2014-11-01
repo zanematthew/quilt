@@ -1,0 +1,3 @@
+[submodule "lib/zm-form-fields"]
+	path = lib/zm-form-fields
+	url = git@labs.zanematthew.com:zm/zm-form-fields.git
