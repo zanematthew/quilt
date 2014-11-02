@@ -182,6 +182,12 @@ Class ZM_Settings Extends ZM_Form_Fields {
                 $name = isset( $field['id'] ) ? $field['id'] : '';
                 $title = isset( $field['title'] ) ? $field['title'] : '';
 
+                if ( isset( $field['id'] ) && isset( $options[ $field['id'] ] ) ){
+                    $value = $options[ $field['id'] ];
+                } else {
+                    $value = null;
+                }
+
                 add_settings_field(
                     $this->namespace.'[' . $field['id'] . ']', // ID
                     $title,
@@ -198,7 +204,7 @@ Class ZM_Settings Extends ZM_Form_Fields {
                         'desc'        => ! empty( $field['desc'] ) ? $field['desc'] : '',
                         // Since we don't want the extended form class to derive names, we specify our names
                         'name'        => $this->namespace . '[' . $field['id'] . ']', // ushyee_settings[my_checkbox_id]
-                        'value'       => $options,
+                        'value'       => $value,
                         'section'     => $id,
                         'size'        => isset( $field['size'] ) ? $field['size'] : null,
                         'options'     => isset( $field['options'] ) ? $field['options'] : '',
