@@ -405,6 +405,10 @@ Class ZM_Settings Extends ZM_Form_Fields {
                         $input[ $key ] = $this->sanitize_default( $value );
                         break;
 
+                    case 'checkboxes' :
+                        $input[ $key ][] = $this->sanitize_default( $value );
+                        break;
+
                     case 'textarea_emails' :
                         $input[ $key ] = $this->sanitize_textarea_emails( $value );
                         break;
