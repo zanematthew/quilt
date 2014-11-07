@@ -1,8 +1,8 @@
 <?php
 
-require_once dirname( __FILE__ ) . '/lib/zm-form-fields/zm-form-fields.php';
-
 Class ZM_Settings Extends ZM_Form_Fields {
+
+    public $namespace;
 
     /**
      * WordPress hooks to be ran during init
@@ -92,27 +92,68 @@ Class ZM_Settings Extends ZM_Form_Fields {
                     array(
                         'id' => 'my_checkbox_id',
                         'title' => __( 'Checkbox', $this->namespace ),
-                        'type' => 'checkbox'
+                        'type' => 'checkbox',
+                        'desc' => 'This is my description.'
+                    ),
+                    array(
+                        'id' => 'my_checkboxes_id',
+                        'title' => __( 'Checkboxes', $this->namespace ),
+                        'type' => 'checkboxes',
+                        'options' => array(
+                            'foo' => 'Foo',
+                            'bar' => 'Bar'
+                            )
+                    ),
+                    array(
+                        'id' => 'my_radio_id',
+                        'title' => __( 'Radio', $this->namespace ),
+                        'type' => 'radio',
+                        'options' => array(
+                            'foo' => 'Foo',
+                            'bar' => 'Bar'
+                            )
                     ),
                     array(
                         'id' => 'my_id',
                         'title' => __( 'Text Field', $this->namespace ),
-                        'type' => 'text'
+                        'type' => 'text',
+                        'desc' => 'This is a default text field, it supports any type of value.'
                     ),
                     array(
                         'id' => 'my_id_url',
                         'title' => __( 'URL Field', $this->namespace ),
-                        'type' => 'url'
+                        'type' => 'url',
+                        'desc' => 'This is a default URL field, type: url, sanitize: esc_url.'
+                    ),
+                    array(
+                        'id' => 'my_id_email',
+                        'title' => __( 'Email Field', $this->namespace ),
+                        'type' => 'email',
+                        'desc' => 'This is a default email field, type: email, sanitize: sanitize_email.'
+                    ),
+                    array(
+                        'id' => 'my_id_hidden',
+                        'title' => __( 'Hidden Field', $this->namespace ),
+                        'type' => 'hidden',
+                        'desc' => 'This is hidden, you can\'t see it unless you view the html source.'
                     ),
                     array(
                         'id' => 'my_textarea_id',
                         'title' => __( 'Textarea', $this->namespace ),
-                        'type' => 'textarea'
+                        'type' => 'textarea',
+                        'desc' => 'Default textarea, sanitize: esc_textarea.'
                     ),
                     array(
                         'id' => 'my_textarea_id_css',
                         'title' => __( 'CSS Textarea', $this->namespace ),
-                        'type' => 'css_textarea'
+                        'type' => 'css_textarea',
+                        'desc' => "Default textarea, sanitize: wp_kses( '' )."
+                    ),
+                    array(
+                        'id' => 'my_textarea_id_email',
+                        'title' => __( 'Email Textarea', $this->namespace ),
+                        'type' => 'textarea_emails',
+                        'desc' => "Custom textarea, supports only valid emails, sanitize: wp_kses( '' )."
                     ),
                     array(
                         'id' => 'any_id',
@@ -120,7 +161,6 @@ Class ZM_Settings Extends ZM_Form_Fields {
                         'type' => 'select',
                         'desc' => '<p>This is a sample select, with options. The options are passed in using the <code>options</code> key, with an assigned array like the following; <code>array( [0] =>"", [2] => Sample Page )</code></p>',
                         'options' => array(
-                                0 => '',
                                 1 => 'Option 1',
                                 2 => 'Option 2'
                         )
@@ -130,7 +170,6 @@ Class ZM_Settings Extends ZM_Form_Fields {
                         'title' => 'Multi-select',
                         'type' => 'multiselect',
                         'options' => array(
-                                0 => '',
                                 1 => 'Option 1',
                                 2 => 'Option 2'
                             )
@@ -144,7 +183,14 @@ Class ZM_Settings Extends ZM_Form_Fields {
                         'id' => 'my_image',
                         'title' => 'Upload',
                         'type' => 'upload'
-                    )
+                    ),
+                    array(
+                        'id' => 'my_thinkbox_url',
+                        'title' => 'Thickbox',
+                        'type' => 'thickbox_url',
+                        'std' => 'http://zanematthew.com/',
+                        'placeholder' => 'View Entries',
+                        )
                 )
             )
         );
@@ -188,6 +234,27 @@ Class ZM_Settings Extends ZM_Form_Fields {
                     $value = null;
                 }
 
+                $attr = $this->get_attributes( $field );
+
+                $temp = array(
+                    'echo'        => true,
+                    'id'          => isset( $field['id'] ) ? $field['id'] : null,
+                    'value'       => $value,
+                    'options'     => isset( $field['options'] ) ? $field['options'] : '',
+                    'name'        => $this->namespace . '[' . $field['id'] . ']', // ushyee_settings[my_checkbox_id
+                    'title'       => '',
+                    // 'section'     => $id,
+                    // 'desc'        => ! empty( $field['desc'] ) ? $field['desc'] : '',
+                    // Since we don't want the extended form class to derive names, we specify our names
+                    // 'size'        => isset( $field['size'] ) ? $field['size'] : null,
+                    // 'std'         => isset( $field['std'] ) ? $field['std'] : '',
+                    // 'placeholder' => isset( $field['placeholder'] ) ? $field['placeholder'] : '',
+                    // 'field_class' => isset( $field['field_class'] ) ? $field['field_class'] : '',
+                    // 'rows'        => isset( $field['rows'] ) ? $field['rows'] : ''
+                ); // These are extra params based into our function/method
+
+                $final = array_merge( $attr, $temp );
+
                 add_settings_field(
                     $this->namespace.'[' . $field['id'] . ']', // ID
                     $title,
@@ -198,21 +265,7 @@ Class ZM_Settings Extends ZM_Form_Fields {
 
                     $this->namespace . '_' . $id, // Page
                     $this->namespace . '_' . $id, // Section
-                    array(
-                        'echo'        => true,
-                        'id'          => isset( $field['id'] ) ? $field['id'] : null,
-                        'desc'        => ! empty( $field['desc'] ) ? $field['desc'] : '',
-                        // Since we don't want the extended form class to derive names, we specify our names
-                        'name'        => $this->namespace . '[' . $field['id'] . ']', // ushyee_settings[my_checkbox_id]
-                        'value'       => $value,
-                        'section'     => $id,
-                        'size'        => isset( $field['size'] ) ? $field['size'] : null,
-                        'options'     => isset( $field['options'] ) ? $field['options'] : '',
-                        'std'         => isset( $field['std'] ) ? $field['std'] : '',
-                        'placeholder' => isset( $field['placeholder'] ) ? $field['placeholder'] : '',
-                        'field_class' => isset( $field['field_class'] ) ? $field['field_class'] : '',
-                        'rows'        => isset( $field['rows'] ) ? $field['rows'] : ''
-                    ) // These are extra params based into our function/method
+                    $final
                 );
             }
 
@@ -389,35 +442,38 @@ Class ZM_Settings Extends ZM_Form_Fields {
 
         foreach( $settings[ $tab ]['fields'] as $field ){
 
-            $key = $field['id'];
-            $value = $input[ $field['id'] ];
-            $type = $field['type'];
+            if ( ! empty( $field['id'] ) && ! empty( $input[ $field['id'] ] ) ){
 
-            if ( array_key_exists( $key, $input ) ){
-                switch( $type ) {
-                    case 'select' :
-                    case 'multiselect' :
-                    case 'us_state' :
-                    case 'textarea' :
-                    case 'textarea_email_template' :
-                    case 'checkbox' :
-                    case 'radio' :
-                        $input[ $key ] = $this->sanitize_default( $value );
-                        break;
+                $key = $field['id'];
+                $value = $input[ $field['id'] ];
+                $type = $field['type'];
 
-                    case 'checkboxes' :
-                        $input[ $key ][] = $this->sanitize_default( $value );
-                        break;
+                if ( array_key_exists( $key, $input ) ){
+                    switch( $type ) {
+                        case 'select' :
+                        case 'multiselect' :
+                        case 'us_state' :
+                        case 'textarea' :
+                        case 'textarea_email_template' :
+                        case 'checkbox' :
+                        case 'radio' :
+                            $input[ $key ] = $this->sanitize_default( $value );
+                            break;
 
-                    case 'textarea_emails' :
-                        $input[ $key ] = $this->sanitize_textarea_emails( $value );
-                        break;
+                        case 'checkboxes' :
+                            $input[ $key ][] = $this->sanitize_default( $value );
+                            break;
 
-                    default:
-                        $input[ $key ] = $this->sanitize_default( $value );
-                        break;
+                        case 'textarea_emails' :
+                            $input[ $key ] = $this->sanitize_textarea_emails( $value );
+                            break;
+
+                        default:
+                            $input[ $key ] = $this->sanitize_default( $value );
+                            break;
+                    }
+                    $input[ $key ] = apply_filters( $this->namespace . '_sanitize_' . $type, $input[ $key ] );
                 }
-                $input[ $key ] = apply_filters( $this->namespace . '_sanitize_' . $type, $input[ $key ] );
             }
 
             // sanitize by key here via filter
@@ -444,62 +500,6 @@ Class ZM_Settings Extends ZM_Form_Fields {
 
     public function sanitize_default( $value=null ){
         return esc_attr( $value );
-    }
-
-
-    /**
-     * This takes an array of "stuff" determines in it what are valid
-     * emails and returns all the emails separated by a new line. For
-     * use in a textarae.
-     *
-     * @since 1.1
-     * @param $emails An array of emails to validate
-     * @return Validated emails separated by a new line (for use in a textarea)
-     */
-    public function sanitize_validate_emails( $emails=null ){
-        $valid_emails = array();
-        foreach( $emails as $email ){
-            $sanitized = sanitize_email( $email );
-            if ( $sanitized ){
-                $valid_emails[] = $sanitized;
-            }
-        }
-
-        $valid_emails = implode(PHP_EOL, $valid_emails);
-        return $valid_emails;
-    }
-
-
-    /**
-     * Takes everything that is in our textarea and creates an array
-     * based on new lines and blank spaces.
-     *
-     * @since 1.1
-     * @param $input (string) The input being saved
-     * @return Sanitized email addresses that are separated by a blank line.
-     */
-    public function sanitize_textarea_emails( $input ){
-        // Explode on new lines, remove blank spaces, convert to array, then re-index
-        $input = array_values( array_filter( explode( PHP_EOL, $input ), 'trim' ) );
-        $emails = array();
-
-        // validate each email
-        foreach( $input as $value ){
-
-            // check for ones that are NOT on a new line, but have a space
-            $pos = strpos( $value, ' ' );
-            if ( $pos !== false ){
-                $more_values = explode( ' ', $value );
-                foreach( $more_values as $more_value ){
-                    $emails[] = $more_value;
-                }
-            } else {
-                $emails[] = $value;
-            }
-
-        }
-
-        return $this->sanitize_validate_emails( $emails );
     }
 
 
