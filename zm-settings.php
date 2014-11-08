@@ -156,6 +156,12 @@ Class ZM_Settings Extends ZM_Form_Fields {
                         'desc' => "Custom textarea, supports only valid emails, sanitize: wp_kses( '' )."
                     ),
                     array(
+                        'id' => 'my_textarea_id_ips',
+                        'title' => __( 'IP Textarea', $this->namespace ),
+                        'type' => 'textarea_ip',
+                        'desc' => "Custom textarea, supports only valid IP address, sanitize: sanitize_ip)."
+                    ),
+                    array(
                         'id' => 'any_id',
                         'title' => __( 'Select', $this->namespace ),
                         'type' => 'select',
@@ -190,6 +196,11 @@ Class ZM_Settings Extends ZM_Form_Fields {
                         'type' => 'thickbox_url',
                         'std' => 'http://zanematthew.com/',
                         'placeholder' => 'View Entries',
+                        ),
+                    array(
+                        'id' => 'my_touch_time',
+                        'title' => 'Date Time',
+                        'type' => 'touchtime',
                         )
                 )
             )
@@ -458,6 +469,7 @@ Class ZM_Settings Extends ZM_Form_Fields {
                         case 'textarea_email_template' :
                         case 'checkbox' :
                         case 'radio' :
+                        case 'touchtime':
                             $input[ $key ] = $this->sanitize_default( $value );
                             break;
 
@@ -471,6 +483,10 @@ Class ZM_Settings Extends ZM_Form_Fields {
 
                         case 'textarea_emails' :
                             $input[ $key ] = $this->sanitize_textarea_emails( $value );
+                            break;
+
+                        case 'textarea_ip' :
+                            $input[ $key ] = $this->sanitize_textarea_ip( $value );
                             break;
 
                         default:
@@ -539,75 +555,6 @@ Class ZM_Settings Extends ZM_Form_Fields {
      */
     public function do_desc( $args ) {
         echo '<p>' . $args['desc'] . '</p>';
-    }
-
-
-    // @todo finish this one
-    public function touchtime_callback( $args ){
-
-        global $wp_locale;
-        $tab_index = 0;
-        $multi = 0;
-        $tab_index_attribute = '';
-
-        if ( (int) $tab_index > 0 )
-            $tab_index_attribute = " tabindex=\"$tab_index\"";
-
-
-        $time_adj = current_time('timestamp');
-
-        $jj = gmdate( 'd', $time_adj );
-        $mm = gmdate( 'm', $time_adj );
-        $aa = gmdate( 'Y', $time_adj );
-        $hh = gmdate( 'H', $time_adj );
-        $mn = gmdate( 'i', $time_adj );
-        $ss = gmdate( 's', $time_adj );
-
-        $cur_jj = gmdate( 'd', $time_adj );
-        $cur_mm = gmdate( 'm', $time_adj );
-        $cur_aa = gmdate( 'Y', $time_adj );
-        $cur_hh = gmdate( 'H', $time_adj );
-        $cur_mn = gmdate( 'i', $time_adj );
-
-        $month = '<label for="mm" class="screen-reader-text">' . __( 'Month' ) . '</label><select ' . ( $multi ? '' : 'id="mm" ' ) . 'name="mm"' . $tab_index_attribute . ">\n";
-        for ( $i = 1; $i < 13; $i = $i +1 ) {
-            $monthnum = zeroise($i, 2);
-            $month .= "\t\t\t" . '<option value="' . $monthnum . '" ' . selected( $monthnum, $mm, false ) . '>';
-            /* translators: 1: month number (01, 02, etc.), 2: month abbreviation */
-            $month .= sprintf( __( '%1$s-%2$s' ), $monthnum, $wp_locale->get_month_abbrev( $wp_locale->get_month( $i ) ) ) . "</option>\n";
-        }
-        $month .= '</select>';
-
-        $day = '<label for="jj" class="screen-reader-text">' . __( 'Day' ) . '</label><input type="text" ' . ( $multi ? '' : 'id="jj" ' ) . 'name="jj" value="' . $jj . '" size="2" maxlength="2"' . $tab_index_attribute . ' autocomplete="off" />';
-        $year = '<label for="aa" class="screen-reader-text">' . __( 'Year' ) . '</label><input type="text" ' . ( $multi ? '' : 'id="aa" ' ) . 'name="aa" value="' . $aa . '" size="4" maxlength="4"' . $tab_index_attribute . ' autocomplete="off" />';
-        $hour = '<label for="hh" class="screen-reader-text">' . __( 'Hour' ) . '</label><input type="text" ' . ( $multi ? '' : 'id="hh" ' ) . 'name="hh" value="' . $hh . '" size="2" maxlength="2"' . $tab_index_attribute . ' autocomplete="off" />';
-        $minute = '<label for="mn" class="screen-reader-text">' . __( 'Minute' ) . '</label><input type="text" ' . ( $multi ? '' : 'id="mn" ' ) . 'name="mn" value="' . $mn . '" size="2" maxlength="2"' . $tab_index_attribute . ' autocomplete="off" />';
-
-        $html = '<div class="timestamp-wrap">';
-        /* translators: 1: month, 2: day, 3: year, 4: hour, 5: minute */
-        printf( __( '%1$s %2$s, %3$s @ %4$s : %5$s' ), $month, $day, $year, $hour, $minute );
-
-        $html .= '</div><input type="hidden" id="ss" name="ss" value="' . $ss . '" />';
-
-        if ( $multi ) return;
-
-        $html .= "\n\n";
-        $map = array(
-            'mm' => array( $mm, $cur_mm ),
-            'jj' => array( $jj, $cur_jj ),
-            'aa' => array( $aa, $cur_aa ),
-            'hh' => array( $hh, $cur_hh ),
-            'mn' => array( $mn, $cur_mn ),
-        );
-        foreach ( $map as $timeunit => $value ) {
-            list( $unit, $curr ) = $value;
-
-            $html .= '<input type="hidden" id="hidden_' . $timeunit . '" name="hidden_' . $timeunit . '" value="' . $unit . '" />' . "\n";
-            $cur_timeunit = 'cur_' . $timeunit;
-            $html .= '<input type="hidden" id="' . $cur_timeunit . '" name="' . $cur_timeunit . '" value="' . $curr . '" />' . "\n";
-        }
-        $html .= '<label for="' . $this->namespace . '[' . $args['id'] . ']"> '  . $args['desc'] . '</label>';
-        echo $html;
     }
 
 
