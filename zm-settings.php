@@ -439,6 +439,7 @@ Class ZM_Settings Extends ZM_Form_Fields {
         $settings = $this->settings();
         $tab      = isset( $referrer['tab'] ) ? $referrer['tab'] : null;
         $input = $input ? $input : array();
+        $tmp = array();
 
         foreach( $settings[ $tab ]['fields'] as $field ){
 
@@ -449,9 +450,9 @@ Class ZM_Settings Extends ZM_Form_Fields {
                 $type = $field['type'];
 
                 if ( array_key_exists( $key, $input ) ){
+
                     switch( $type ) {
                         case 'select' :
-                        case 'multiselect' :
                         case 'us_state' :
                         case 'textarea' :
                         case 'textarea_email_template' :
@@ -462,6 +463,10 @@ Class ZM_Settings Extends ZM_Form_Fields {
 
                         case 'checkboxes' :
                             $input[ $key ][] = $this->sanitize_default( $value );
+                            break;
+
+                        case 'multiselect' :
+                            $input[ $key ] = $this->sanitize_multiselect( $value );
                             break;
 
                         case 'textarea_emails' :
@@ -495,11 +500,6 @@ Class ZM_Settings Extends ZM_Form_Fields {
         $output = array_merge( $options, $input );
 
         return $output;
-    }
-
-
-    public function sanitize_default( $value=null ){
-        return esc_attr( $value );
     }
 
 
