@@ -29,7 +29,8 @@ Class ZM_Settings Extends ZM_Form_Fields {
      * @since 1.0.0.
      */
     public function settings(){
-        return $this->settings;
+        $settings = apply_filters( $this->namespace . '_settings', $this->settings );
+        return $settings;
     }
 
 
