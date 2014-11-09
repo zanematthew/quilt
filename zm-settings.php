@@ -76,7 +76,8 @@ Class ZM_Settings Extends ZM_Form_Fields {
                     'value'       => $value,
                     'options'     => isset( $field['options'] ) ? $field['options'] : '',
                     'name'        => $this->namespace . '[' . $field['id'] . ']',
-                    'title'       => ''
+                    'title'       => '',
+                    'namespace'   => $this->namespace
                 ); // These are extra params based into our function/method
 
                 $final = array_merge( $attr, $temp );
