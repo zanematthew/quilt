@@ -340,8 +340,8 @@ Class ZM_Settings Extends ZM_Form_Fields {
      *
      * @since 1.0.0
      */
-    public function general( $input ){
-        return $input;
+    public function sanitize_default( $input ){
+        return esc_attr( $input );
     }
 
 
