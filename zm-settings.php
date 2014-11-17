@@ -311,10 +311,10 @@ Class ZM_Settings Extends ZM_Form_Fields {
                     }
                     $input[ $key ] = apply_filters( $this->namespace . '_sanitize_' . $type, $input[ $key ] );
                 }
-            }
 
-            // sanitize by key here via filter
-            $input[ $key ] = apply_filters( $this->namespace . '_sanitize_' . $key, $input[ $key ] );
+                // sanitize by key here via filter
+                $input[ $key ] = apply_filters( $this->namespace . '_sanitize_' . $key, $input[ $key ] );
+            }
         }
 
         // Loop through the whitelist and unset any that are empty for the tab being saved
