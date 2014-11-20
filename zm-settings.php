@@ -160,39 +160,44 @@ Class ZM_Settings Extends ZM_Form_Fields {
         // to be the first/active tab
         $current_tab = empty( $current_tab ) ? $tab_ids[0] : $current_tab;
 
+        // We have a single tab instance, no need to use tabs
+        if ( count( $tab_ids ) == 1 ) {
+            $tabs = $this->settings();
+            $title = '<h3>' . $tabs[ $current_tab ]['title'] . '</h3>';
+        }
 
-        $tabs = null;
-        foreach( $this->settings() as $id => $section ){
-            $tab_url = add_query_arg( array(
-                'settings-updated' => false,
-                'tab' => $id
-            ) );
+        // We have multiple settings, lets build tabs
+        else {
+            $tabs = null;
+            foreach( $this->settings() as $id => $section ){
+                $tab_url = add_query_arg( array(
+                    'settings-updated' => false,
+                    'tab' => $id
+                ) );
 
-            $active = $current_tab == $id ? ' nav-tab-active' : '';
+                $active = $current_tab == $id ? ' nav-tab-active' : '';
 
-            $tabs .= '<a href="' . esc_url( $tab_url ) . '" title="' . esc_attr( $section['title'] ) . '" class="nav-tab' . $active . '">';
-            $tabs .= esc_html( $section['title'] );
-            $tabs .= '</a>';
+                $tabs .= '<a href="' . esc_url( $tab_url ) . '" title="' . esc_attr( $section['title'] ) . '" class="nav-tab' . $active . '">';
+                $tabs .= esc_html( $section['title'] );
+                $tabs .= '</a>';
+            }
+
+            $title = '<h2 class="nav-tab-wrapper">' . $tabs . '</h2>';
         } ?>
         <div class="wrap">
             <div id="icon-options-general" class="icon32"><br></div>
             <h2><?php echo $this->page_title; ?></h2>
             <form action="options.php" method="post" class="form">
-
-                <h2 class="nav-tab-wrapper">
-                    <?php echo $tabs; ?>
-                </h2>
+                <?php echo $title; ?>
+                <?php echo apply_filters( "{$this->namespace}_below_settings_title", null ); ?>
                 <table class="form-table">
                     <?php settings_fields( $this->namespace ); ?>
                     <?php do_settings_fields( $this->namespace . '_' . $current_tab, $this->namespace . '_' . $current_tab ); ?>
                 </table>
                 <hr >
-
                 <p class="description"><?php echo apply_filters( "{$this->namespace}_settings_footer", 'Thank you for using the ZM Settings API.' ); ?></p>
-
                 <?php submit_button(); ?>
             </form>
-
         </div>
     <?php }
 
@@ -269,6 +274,10 @@ Class ZM_Settings Extends ZM_Form_Fields {
         $tab      = isset( $referrer['tab'] ) ? $referrer['tab'] : null;
         $input = $input ? $input : array();
         $tmp = array();
+
+        if ( count( $settings ) == 1 ){
+            $tab = key( $settings );
+        }
 
         foreach( $settings[ $tab ]['fields'] as $field ){
 
