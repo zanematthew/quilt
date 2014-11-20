@@ -7,19 +7,38 @@ Class ZM_Settings Extends ZM_Form_Fields {
      * WordPress hooks to be ran during init
      *
      * @since 1.0.0
+     *
+     * @param $namespace    The unique name space to be saved in the options table
+     * @param $type         (bool) Plugin or Theme, this determines to add the menu link to the "Appearance" menu or "Settings"
+     * @param $settings     (array) An array of settings
+     * @param $paths        (array) Array of paths to where the settings are, relative to the plugin/theme, expects a trailing slash
+     * @param $labels       (array) An array of labels (Menu name, Page name)
+     *
      */
-    public function __construct( $names=null, $paths=null, $settings=null ){
+    public function __construct( $namespace=null, $type=null, $settings=null, $paths=null, $labels=null ){
 
-        $this->namespace = $names['namespace'];
-        $this->menu_title = $names['menu_title'];
-        $this->page_title = $names['page_title'];
+        $this->namespace = $namespace;
 
-        $this->dir_url = $paths['dir_url'];
+        $this->setting_type = $type;
+
+        $this->menu_title = $labels['menu_title'];
+        $this->page_title = $labels['page_title'];
+
+        $this->dir_url = trailingslashit( $paths['dir_url'] );
+        $this->dir_path = trailingslashit( $paths['dir_path'] );
+        $this->dir_url_form_fields = trailingslashit( $paths['dir_url_form_fields'] );
+
         $this->settings = $settings;
 
         add_action( 'admin_menu', array( &$this, 'admin_menu' ) );
         add_action( 'admin_init', array( &$this, 'register_settings' ) );
         add_action( 'admin_enqueue_scripts', array( &$this, 'admin_enqueue_scripts') );
+
+        add_filter( 'zm_form_fields_dir_url', array( &$this, 'zm_form_fields_dir_url' ) );
+    }
+
+    public function zm_form_fields_dir_url(){
+        return $this->dir_url_form_fields;
     }
 
 
@@ -109,26 +128,12 @@ Class ZM_Settings Extends ZM_Form_Fields {
      */
     public function admin_menu(){
 
-        $sub_menu_pages = apply_filters( $this->namespace . '_admin_submenu', array(
-            array(
-                'parent_slug' => 'options-general.php',
-                'page_title' => $this->page_title,
-                'menu_title' => $this->menu_title,
-                'capability' => 'manage_options',
-                'menu_slug' => $this->namespace,
-                'function' => 'load_template'
-                )
-            ) );
-
-        foreach( $sub_menu_pages as $sub_menu ){
-            add_submenu_page(
-                $sub_menu['parent_slug'],
-                $sub_menu['page_title'],
-                $sub_menu['menu_title'],
-                $sub_menu['capability'],
-                $sub_menu['menu_slug'],
-                array( &$this, $sub_menu['function'] )
-            );
+        if ( $this->setting_type == 'theme' ){
+            add_theme_page( $this->page_title, $this->menu_title, 'manage_options', $this->namespace, array( &$this, 'load_template' ) );
+        } elseif ( $this->setting_type == 'plugin' ) {
+            add_submenu_page( 'options-general.php', $this->page_title, $this->menu_title, 'manage_options', $this->namespace, array( &$this, 'load_template' ) );
+        } else {
+            wp_die('Invalid setting_type');
         }
     }
 
