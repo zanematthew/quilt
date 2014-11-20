@@ -98,7 +98,7 @@ Class ZM_Settings Extends ZM_Form_Fields {
             }
         }
 
-        register_setting( $this->namespace, $this->namespace, array( &$this, 'sanitize' ) );
+        register_setting( $this->namespace, $this->namespace, array( &$this, 'sanitize_single' ) );
     }
 
 
@@ -253,7 +253,7 @@ Class ZM_Settings Extends ZM_Form_Fields {
      *
      * @since 1.0.0
      */
-    public function sanitize( $input=array() ){
+    public function sanitize_single( $input=array() ){
 
         if ( empty( $_POST['_wp_http_referer'] ) )
             return;
@@ -340,7 +340,7 @@ Class ZM_Settings Extends ZM_Form_Fields {
      *
      * @since 1.0.0
      */
-    public function sanitize_default( $input ){
+    public function sanitize_default( $input=null ){
         return esc_attr( $input );
     }
 
