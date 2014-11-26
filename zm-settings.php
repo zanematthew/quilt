@@ -15,18 +15,26 @@ Class ZM_Settings Extends ZM_Form_Fields {
      * @param $labels       (array) An array of labels (Menu name, Page name)
      *
      */
-    public function __construct( $namespace=null, $type=null, $settings=null, $paths=null, $labels=null ){
+    public function __construct( $namespace=null, $settings=null, $labels=null, $type=null, $paths=null ){
 
         $this->namespace = $namespace;
 
+        // @todo presumed 'plugin' type
         $this->setting_type = $type;
 
+        // @todo possibly derive this for plugins: http://codex.wordpress.org/Function_Reference/get_plugin_data
+        // Set the page title to the plugin name, and set the settings description to the plugin description?
         $this->menu_title = $labels['menu_title'];
         $this->page_title = $labels['page_title'];
 
-        $this->dir_url = trailingslashit( $paths['dir_url'] );
-        $this->dir_path = trailingslashit( $paths['dir_path'] );
-        $this->dir_url_form_fields = trailingslashit( $paths['dir_url_form_fields'] );
+        $this->dir_url = empty( $paths['dir_url'] ) ? plugin_dir_url( __FILE__ ) : trailingslashit( $paths['dir_url'] );
+        $this->dir_path = empty( $paths['dir_path'] ) ? plugin_dir_url( __FILE__ ) : trailingslashit( $paths['dir_path'] );
+
+
+        if ( isset( $paths['dir_url_form_fields'] ) ){
+            $this->dir_url_form_fields = trailingslashit( $paths['dir_url_form_fields'] );
+            add_filter( 'zm_form_fields_dir_url', array( &$this, 'zm_form_fields_dir_url' ) );
+        }
 
         $this->settings = $settings;
 
@@ -34,7 +42,6 @@ Class ZM_Settings Extends ZM_Form_Fields {
         add_action( 'admin_init', array( &$this, 'register_settings' ) );
         add_action( 'admin_enqueue_scripts', array( &$this, 'admin_enqueue_scripts') );
 
-        add_filter( 'zm_form_fields_dir_url', array( &$this, 'zm_form_fields_dir_url' ) );
     }
 
     public function zm_form_fields_dir_url(){
@@ -300,7 +307,18 @@ Class ZM_Settings Extends ZM_Form_Fields {
                             break;
 
                         case 'checkboxes' :
-                            $input[ $key ][] = $this->sanitize_default( $value );
+                            // If the first value is an array, we assume the entire 'options' is a multi-dimensional array.
+                            if ( isset( $field['options'][0] ) && is_array( $field['options'][0] ) ){
+
+                                // Unset this array so we do not have any duplicates
+                                unset( $input[ $key ] );
+                                foreach( $value as $kk => $vv ){
+                                    $input[ $key ][ $field['options'][ $vv ]['id'] ] = $field['options'][ $vv ];
+                                }
+                            } else {
+
+                            }
+                            // $input[ $key ][] = $this->sanitize_default( $value );
                             break;
 
                         case 'multiselect' :
