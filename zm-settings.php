@@ -68,10 +68,6 @@ Class ZM_Settings Extends ZM_Form_Fields {
      */
     public function register_settings(){
 
-        if ( false == get_option( $this->namespace ) ) {
-            add_option( $this->namespace );
-        }
-
         // Get our current options, these are passed into our field array
         $options = $this->get_options();
 
@@ -89,8 +85,12 @@ Class ZM_Settings Extends ZM_Form_Fields {
                 $name = isset( $field['id'] ) ? $field['id'] : '';
                 $title = isset( $field['title'] ) ? $field['title'] : '';
 
-                if ( isset( $field['id'] ) && isset( $options[ $field['id'] ] ) ){
+                if ( isset( $field['value'] ) ) {
                     $value = $options[ $field['id'] ];
+                } else if ( isset( $field['id'] ) && isset( $options[ $field['id'] ] ) ){
+                    $value = $options[ $field['id'] ];
+                } elseif ( isset( $field['std'] ) ) {
+                    $value = $field['std'];
                 } else {
                     $value = null;
                 }
@@ -217,14 +217,30 @@ Class ZM_Settings Extends ZM_Form_Fields {
      */
     public function get_options(){
 
-        $settings = get_option( $this->namespace, array() );
+        $settings = get_option( $this->namespace );
 
-        // Return false if we have the setting, but its empty
-        if ( empty( $setting ) && isset( $setting ) ){
-            $settings = false;
-        }
+        // Create "sane options"
         if ( empty( $settings ) ){
-            $settings = array();
+
+            foreach( $this->settings as $k => $v ){
+
+                foreach( $v['fields'] as $vv ){
+                    if ( is_array( $vv ) ){
+                        if ( isset( $vv['value'] ) ){
+                            $settings[ $vv['id'] ] = $vv['value'];
+                        } elseif ( isset( $vv['std'] ) ) {
+                            $settings[ $vv['id'] ] = $vv['std'];
+                        } else {
+                            $settings[ $vv['id'] ] = null;
+                        }
+                    }
+                }
+            }
+        }
+
+
+        // if ( empty( $settings ) ){
+            // $settings = array();
         //     // Update old settings to new single setting
         //     $settings = array(
         //         'keep_me_logged_in_enabled' => ( get_option( 'ajax_login_register_keep_me_logged_in' ) == "on" ? 1 : null ),
@@ -237,8 +253,8 @@ Class ZM_Settings Extends ZM_Form_Fields {
         //         'facebook_app_id' => get_option( 'app_id' )
         //         );
         //     $r = update_option( 'zm_private_site_settings', $settings );
-        }
-        // return apply_filters( 'zm_private_site_settings', $settings );
+        // }
+
         return $settings;
     }
 
@@ -307,18 +323,26 @@ Class ZM_Settings Extends ZM_Form_Fields {
                             break;
 
                         case 'checkboxes' :
+
                             // If the first value is an array, we assume the entire 'options' is a multi-dimensional array.
                             if ( isset( $field['options'][0] ) && is_array( $field['options'][0] ) ){
 
                                 // Unset this array so we do not have any duplicates
-                                unset( $input[ $key ] );
+                                // unset( $input[ $key ] );
                                 foreach( $value as $kk => $vv ){
-                                    $input[ $key ][ $field['options'][ $vv ]['id'] ] = $field['options'][ $vv ];
-                                }
-                            } else {
 
+                                    // Weird, wtf? elves
+                                    if ( is_string( $vv ) ){
+                                        $wtf = $field['options'][ $vv ]['id'];
+                                        $foo = $field['options'][ $vv ];
+                                        $input[ $key ][ $wtf ] = $foo;
+                                    }
+                                }
+
+                            } else {
+                                $input[ $key ][] = $value;
                             }
-                            // $input[ $key ][] = $this->sanitize_default( $value );
+
                             break;
 
                         case 'multiselect' :
@@ -341,19 +365,23 @@ Class ZM_Settings Extends ZM_Form_Fields {
                             $input[ $key ] = $this->sanitize_default( $value );
                             break;
                     }
-                    $input[ $key ] = apply_filters( $this->namespace . '_sanitize_' . $type, $input[ $key ] );
+                    if ( ! empty( $input[ $key ] ) )
+                        $input[ $key ] = apply_filters( $this->namespace . '_sanitize_' . $type, $input[ $key ] );
                 }
 
                 // sanitize by key here via filter
-                $input[ $key ] = apply_filters( $this->namespace . '_sanitize_' . $key, $input[ $key ] );
+                if ( ! empty( $input[ $key ] ) )
+                    $input[ $key ] = apply_filters( $this->namespace . '_sanitize_' . $key, $input[ $key ] );
             }
         }
+
 
         // Loop through the whitelist and unset any that are empty for the tab being saved
         $options = $this->get_options();
         if ( ! empty( $settings[ $tab ] ) ) {
             foreach ( $settings[ $tab ]['fields'] as $field ) {
                 $key = $field['id'];
+
                 if ( empty( $input[ $key ] ) ) {
                     unset( $options[ $key ] );
                 }
