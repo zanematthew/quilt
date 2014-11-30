@@ -194,7 +194,7 @@ Class ZM_Settings Extends ZM_Form_Fields {
         <div class="wrap">
             <div id="icon-options-general" class="icon32"><br></div>
             <h2><?php echo $this->page_title; ?></h2>
-            <form action="options.php" method="post" class="form">
+            <form action="options.php" method="POST" id="<?php echo $this->namespace; ?>_settings_form">
                 <?php echo $title; ?>
                 <?php echo apply_filters( "{$this->namespace}_below_settings_title", null ); ?>
                 <table class="form-table">
@@ -204,7 +204,7 @@ Class ZM_Settings Extends ZM_Form_Fields {
                 <hr >
                 <p class="description"><?php echo apply_filters( "{$this->namespace}_settings_footer",
                 __( 'Thank you for using the ZM Settings API.', $this->namespace ) ); ?></p>
-                <?php submit_button(); ?>
+                <?php submit_button( __( 'Save Changes', $this->namespace ), 'primary', 'submit_form', true ) ?>
             </form>
         </div>
     <?php }
@@ -366,13 +366,17 @@ Class ZM_Settings Extends ZM_Form_Fields {
                             $input[ $key ] = $this->sanitize_default( $value );
                             break;
                     }
-                    if ( ! empty( $input[ $key ] ) )
+
+                    // Sanitize by type
+                    if ( ! empty( $input[ $key ] ) ){
                         $input[ $key ] = apply_filters( $this->namespace . '_sanitize_' . $type, $input[ $key ] );
+                    }
                 }
 
                 // sanitize by key here via filter
-                if ( ! empty( $input[ $key ] ) )
+                if ( ! empty( $input[ $key ] ) ){
                     $input[ $key ] = apply_filters( $this->namespace . '_sanitize_' . $key, $input[ $key ] );
+                }
             }
         }
 
@@ -432,6 +436,57 @@ Class ZM_Settings Extends ZM_Form_Fields {
      */
     public function do_desc( $args ) {
         echo '<p>' . $args['desc'] . '</p>';
+    }
+
+
+    /**
+     * Renders license fields.
+     *
+     * @since 1.0.0
+     * @param array $args Arguments passed by the setting
+     * @return void
+     */
+    public function do_license( $args ) {
+
+        // Use this to pass in the license data
+        $args = apply_filters( 'zm_settings_license_args', $args );
+
+        $button_text = __('Activate', $this->namespace );
+        $status_text = null;
+        $action = 'license_activate';
+
+        // Handle displaying of different license status' here,
+        // currently we just handle "valid"
+        if ( ! empty( $args['extra']['license_data'] ) ){
+            if ( $args['extra']['license_data']['license'] == 'valid' ) {
+                $status_text = '<span style="color:green;"> ' . __('Active', $this->namespace ) . '</span>';
+                $button_text = __('Deactivate', $this->namespace );
+                $action = 'license_deactivate';
+            } else {
+                $status_text = '<span style="color:red;"> ' . __('Inactive', $this->namespace ) . '</span>';
+            }
+        }
+
+        /**
+         * Display our input field
+         */
+        ?>
+        <input type="text" placeholder="<?php esc_attr_e( $args['std'] ); ?>" class="regular-text" id="<?php echo $args['id']; ?>" name="<?php echo $args['name']; ?>" value="<?php echo $args['value']; ?>"/>
+        <label for="<?php echo $args['id']; ?>"><?php echo $args['desc']; ?></label>
+
+        <?php
+        /**
+         * If we have a license we show the Activate/Deactivate along with the status
+         */
+        if ( ! empty( $args['value'] ) ) : ?>
+            <input type="hidden" name="<?php echo $this->namespace; ?>[license_action]" id="zm_settings_license_action" value="" />
+            <input type="hidden" name="<?php echo $this->namespace; ?>[previous_license]" id="zm_settings_previous_license" value="<?php echo $args['value']; ?>" />
+
+            <input type="button" name="zm_alr_pro_activate_button" data-zm_license_action="<?php echo $action; ?>" id="zm_license_activate_button" class="button" value="<?php echo $button_text; ?>" />
+            <?php echo $status_text; ?>
+            <?php do_action( 'zm_settings_below_license' ); ?>
+        <?php endif; ?>
+        <?php
     }
 
 
