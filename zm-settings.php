@@ -324,26 +324,24 @@ Class ZM_Settings Extends ZM_Form_Fields {
                             break;
 
                         case 'checkboxes' :
-
-                            // If the first value is an array, we assume the entire 'options' is a multi-dimensional array.
-                            if ( isset( $field['options'][0] ) && is_array( $field['options'][0] ) ){
-
-                                // Unset this array so we do not have any duplicates
-                                // unset( $input[ $key ] );
-                                foreach( $value as $kk => $vv ){
-
-                                    // Weird, wtf? elves
-                                    if ( is_string( $vv ) ){
-                                        $wtf = $field['options'][ $vv ]['id'];
-                                        $foo = $field['options'][ $vv ];
-                                        $input[ $key ][ $wtf ] = $foo;
+                            $tmp = array();
+                            foreach( $field['options'] as $k => $v ){
+                                if ( is_array( $v ) ){
+                                    if ( in_array($v['id'], $value) ){
+                                        if ( ! empty( $v['title'] ) ){
+                                            $tmp[ $v['id'] ] = array(
+                                                'id' => $v['id'],
+                                                'title' => $v['title']
+                                            );
+                                        }
                                     }
+                                } elseif ( in_array( $k, $value ) ){
+                                    $input[ $key ] = $value;
                                 }
-
-                            } else {
-                                $input[ $key ][] = $value;
                             }
-
+                            if ( ! empty( $tmp ) ){
+                                $input[ $key ] = $tmp;
+                            }
                             break;
 
                         case 'multiselect' :
