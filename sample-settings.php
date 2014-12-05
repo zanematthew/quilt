@@ -15,8 +15,7 @@ $settings = array(
             array(
                 'id' => 'usage_description',
                 'title' => __( 'Description', $namespace ),
-                'desc' => __( 'Thank you for using zM Settings API. Each tab shows in detail how to use this API. All of the functionality this API provides is designed to be filtered using; hooks and filters. Click through each tab to see the default field types, and how to sanitize settings.
-                    ', $namespace ),
+                'desc' => __( 'Thank you for using ZM Settings API. Each tab shows in detail how to use this API. All of the functionality this API provides is designed to be filtered using; hooks and filters. Click through each tab to see the default field types, and how to sanitize settings.', $namespace ),
                 'type' => 'desc'
             ),
             array(
