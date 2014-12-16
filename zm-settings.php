@@ -1,5 +1,6 @@
 <?php
 
+if ( ! class_exists( 'ZM_Settings' ) ) :
 Class ZM_Settings Extends ZM_Form_Fields {
 
 
@@ -134,7 +135,6 @@ Class ZM_Settings Extends ZM_Form_Fields {
      * @since 1.0.0
      */
     public function admin_menu(){
-
         if ( $this->setting_type == 'theme' ){
             add_theme_page( $this->page_title, $this->menu_title, 'manage_options', $this->namespace, array( &$this, 'load_template' ) );
         } elseif ( $this->setting_type == 'plugin' ) {
@@ -502,3 +502,4 @@ Class ZM_Settings Extends ZM_Form_Fields {
         }
     }
 }
+endif;
