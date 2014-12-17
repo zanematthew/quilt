@@ -193,7 +193,6 @@ Class ZM_Settings Extends ZM_Form_Fields {
         }
 
         $below_title = apply_filters( "{$this->namespace}_below_settings_title", null );
-        $default_tab = apply_filters( "{$this->namespace}_default_tab", null );
         $description = apply_filters( "{$this->namespace}_settings_footer", __( 'Thank you for using the ZM Settings API.', $this->namespace ) );
 
         ?>
@@ -203,8 +202,6 @@ Class ZM_Settings Extends ZM_Form_Fields {
             <form action="options.php" method="POST" id="<?php echo $this->namespace; ?>_settings_form">
                 <?php echo $title; ?>
                 <?php echo $below_title; ?>
-                <input type="hidden" name="<?php echo $this->namespace; ?>_default_tab" value="<?php echo $default_tab; ?>" />
-
                 <table class="form-table">
                     <?php settings_fields( $this->namespace ); ?>
                     <?php do_settings_fields( $this->namespace . '_' . $current_tab, $this->namespace . '_' . $current_tab ); ?>
@@ -516,15 +513,11 @@ Class ZM_Settings Extends ZM_Form_Fields {
             $tab = $_POST['tab'];
         }
 
-        // If we have a default tab
-        elseif ( ! empty( $_POST[ $this->namespace . '_default_tab' ] ) ){
-            $tab = $_POST[ $this->namespace . '_default_tab' ];
-        }
-
         else {
             $tab = key( $this->settings() );
         }
-        return $tab;
+
+        return apply_filters( "{$this->namespace}_default_tab", $tab );
     }
 }
 endif;
