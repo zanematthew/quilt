@@ -190,20 +190,27 @@ Class ZM_Settings Extends ZM_Form_Fields {
             }
 
             $title = '<h2 class="nav-tab-wrapper">' . $tabs . '</h2>';
-        } ?>
+        }
+
+        $below_title = apply_filters( "{$this->namespace}_below_settings_title", null );
+        $default_tab = apply_filters( "{$this->namespace}_default_tab", null );
+        $description = apply_filters( "{$this->namespace}_settings_footer", __( 'Thank you for using the ZM Settings API.', $this->namespace ) );
+
+        ?>
         <div class="wrap">
             <div id="icon-options-general" class="icon32"><br></div>
             <h2><?php echo $this->page_title; ?></h2>
             <form action="options.php" method="POST" id="<?php echo $this->namespace; ?>_settings_form">
                 <?php echo $title; ?>
-                <?php echo apply_filters( "{$this->namespace}_below_settings_title", null ); ?>
+                <?php echo $below_title; ?>
+                <input type="hidden" name="<?php echo $this->namespace; ?>_default_tab" value="<?php echo $default_tab; ?>" />
+
                 <table class="form-table">
                     <?php settings_fields( $this->namespace ); ?>
                     <?php do_settings_fields( $this->namespace . '_' . $current_tab, $this->namespace . '_' . $current_tab ); ?>
                 </table>
                 <hr >
-                <p class="description"><?php echo apply_filters( "{$this->namespace}_settings_footer",
-                __( 'Thank you for using the ZM Settings API.', $this->namespace ) ); ?></p>
+                <p class="description"><?php echo $description; ?></p>
                 <?php submit_button( __( 'Save Changes', $this->namespace ), 'primary', 'submit_form', true ) ?>
             </form>
         </div>
@@ -292,16 +299,10 @@ Class ZM_Settings Extends ZM_Form_Fields {
         if ( empty( $_POST['_wp_http_referer'] ) )
             return;
 
-        parse_str( $_POST['_wp_http_referer'], $referrer );
-
         $settings = $this->settings();
-        $tab      = isset( $referrer['tab'] ) ? $referrer['tab'] : null;
+        $tab = $this->get_tab();
         $input = $input ? $input : array();
         $tmp = array();
-
-        if ( count( $settings ) == 1 ){
-            $tab = key( $settings );
-        }
 
         foreach( $settings[ $tab ]['fields'] as $field ){
 
@@ -500,6 +501,30 @@ Class ZM_Settings Extends ZM_Form_Fields {
         if ( $screen->id == 'settings_page_' . $this->namespace ){
             wp_enqueue_style( $this->namespace . 'admin-script', $this->dir_url . 'assets/stylesheets/admin.css', '', '1.0' );
         }
+    }
+
+
+    /**
+     * Determine which tab to use to save the settings/options
+     *
+     * @param
+     * @return $tab (string) The default tab to use for saving settings/options
+     */
+    public function get_tab(){
+        // If we have a referrer tab
+        if ( isset( $_POST['tab'] ) ){
+            $tab = $_POST['tab'];
+        }
+
+        // If we have a default tab
+        elseif ( ! empty( $_POST[ $this->namespace . '_default_tab' ] ) ){
+            $tab = $_POST[ $this->namespace . '_default_tab' ];
+        }
+
+        else {
+            $tab = key( $this->settings() );
+        }
+        return $tab;
     }
 }
 endif;
