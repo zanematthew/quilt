@@ -53,6 +53,9 @@ This allows for the library to be bundled in with a theme as "theme options".
 ## Usage – Plugin settings
 
 ```
+require get_template_directory() . '/lib/zm-form-fields/zm-form-fields.php';
+require plugin_dir_path( __FILE__ ) . '/lib/zm-settings/zm-settings.php';
+
 function my_function_setup(){   
     
     $namespace = 'my-namespace';
@@ -63,7 +66,7 @@ function my_function_setup(){
             'fields' => array(
                 array(
                     'id' => 'foo_header',
-                    'title' => 'Constant Contact',
+                    'title' => 'My Header',
                     'type' => 'header'
                     ),
                 array(
@@ -109,7 +112,66 @@ add_action( 'init', 'my_function_setup' );
 
 ## Usage – Theme Options
 
-All thats needed is to assign the `type` to be 'theme' and assign the `dir_url_form_fields` to `get_stylesheet_dir_uri()`.
+All thats needed is to assign the `type` to be 'theme' and assign the `dir_url_form_fields` to `get_stylesheet_dir_uri()`. Full snippet is below.
+
+
+```
+require get_template_directory() . '/lib/zm-form-fields/zm-form-fields.php';
+require get_template_directory() . '/lib/zm-settings/zm-settings.php';
+
+function my_function_setup(){
+
+    $namespace = 'my-namespace';
+
+    $settings = array(
+        'foo' => array(
+            'title' => 'Foo',
+            'fields' => array(
+                array(
+                    'id' => 'foo_header',
+                    'title' => 'My Header',
+                    'type' => 'header'
+                    ),
+                array(
+                    'id' => 'foo_usage',
+                    'title' => 'Usage',
+                    'type' => 'desc',
+                    'desc' => 'A description.'
+                    ),
+                array(
+                    'id' => 'some_text_field',
+                    'title' => 'Text Field',
+                    'type' => 'text'
+                    )
+            )
+        )
+    );
+
+    $labels = array(
+        'menu_title' => 'My Theme Options',
+        'page_title' => 'My Theme – An awesome theme'
+    );
+
+    $type = 'theme';
+
+    $paths = array(
+        'dir_url_form_fields' => get_template_directory() . '/lib/zm-form-fields/'
+    );
+
+    global $my_settings_obj;
+    $my_settings_obj = new ZM_Settings(
+        $namespace,
+        $settings,
+        $labels,
+        $type,
+        $paths
+    );
+
+    global $my_theme_settings;
+    $my_theme_settings = $my_settings_obj->get_options();
+}
+add_action( 'init', 'my_function_setup' );
+```
 
 ## Usage – Retrieveing the Settings
 
