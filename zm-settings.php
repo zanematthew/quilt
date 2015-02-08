@@ -135,10 +135,37 @@ Class ZM_Settings Extends ZM_Form_Fields {
      * @since 1.0.0
      */
     public function admin_menu(){
+
+        $params = apply_filters( 'zm_settings_admin_menu_' . $this->namespace . '_filter', array(
+            'title' => $this->page_title,
+            'menu_title' => $this->menu_title,
+            'permission' => 'manage_options',
+            'namespace' => $this->namespace,
+            'template' => array( &$this, 'load_template' ),
+            'submenu' => 'options-general.php'
+            ) );
+
         if ( $this->setting_type == 'theme' ){
-            add_theme_page( $this->page_title, $this->menu_title, 'manage_options', $this->namespace, array( &$this, 'load_template' ) );
+
+            add_theme_page(
+                $params['title'],
+                $params['menu_title'],
+                $params['permission'],
+                $params['namespace'],
+                $params['template']
+            );
+
         } elseif ( $this->setting_type == 'plugin' ) {
-            add_submenu_page( 'options-general.php', $this->page_title, $this->menu_title, 'manage_options', $this->namespace, array( &$this, 'load_template' ) );
+
+            add_submenu_page(
+                $params['submenu'],
+                $params['title'],
+                $params['menu_title'],
+                $params['permission'],
+                $params['namespace'],
+                $params['template']
+            );
+
         } else {
             wp_die('Invalid setting_type');
         }
