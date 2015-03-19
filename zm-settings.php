@@ -70,7 +70,7 @@ Class ZM_Settings Extends ZM_Form_Fields {
     public function register_settings(){
 
         // Get our current options, these are passed into our field array
-        $options = $this->get_options();
+        $options = $this->get_sane_options();
 
         foreach( $this->settings() as $id => $section ) {
 
@@ -216,9 +216,10 @@ Class ZM_Settings Extends ZM_Form_Fields {
                 $tabs .= '</a>';
             }
 
-            $title = '<h2 class="nav-tab-wrapper">' . $tabs . '</h2>';
+            $tabs = '<h2 class="nav-tab-wrapper">' . $tabs . '</h2>';
         }
 
+        $below_tabs = apply_filters( "{$this->namespace}_below_settings_tabs", null );
         $below_title = apply_filters( "{$this->namespace}_below_settings_title", null );
         $description = apply_filters( "{$this->namespace}_settings_footer", __( 'Thank you for using the ZM Settings API.', $this->namespace ) );
 
@@ -226,9 +227,10 @@ Class ZM_Settings Extends ZM_Form_Fields {
         <div class="wrap">
             <div id="icon-options-general" class="icon32"><br></div>
             <h2><?php echo $this->page_title; ?></h2>
-            <form action="options.php" method="POST" id="<?php echo $this->namespace; ?>_settings_form">
-                <?php echo $title; ?>
-                <?php echo $below_title; ?>
+            <?php echo $below_title; ?>
+            <form action="options.php" method="POST" id="<?php echo $this->namespace; ?>_settings_form" class="<?php echo $current_tab; ?>-settings">
+                <?php echo $tabs; ?>
+                <?php echo $below_tabs; ?>
                 <table class="form-table">
                     <?php settings_fields( $this->namespace ); ?>
                     <?php do_settings_fields( $this->namespace . '_' . $current_tab, $this->namespace . '_' . $current_tab ); ?>
@@ -251,26 +253,6 @@ Class ZM_Settings Extends ZM_Form_Fields {
 
         $settings = get_option( $this->namespace );
 
-        // Create "sane options"
-        if ( empty( $settings ) ){
-
-            foreach( $this->settings as $k => $v ){
-
-                foreach( $v['fields'] as $vv ){
-                    if ( is_array( $vv ) ){
-                        if ( isset( $vv['value'] ) ){
-                            $settings[ $vv['id'] ] = $vv['value'];
-                        } elseif ( isset( $vv['std'] ) ) {
-                            $settings[ $vv['id'] ] = $vv['std'];
-                        } else {
-                            $settings[ $vv['id'] ] = null;
-                        }
-                    }
-                }
-            }
-        }
-
-
         // if ( empty( $settings ) ){
             // $settings = array();
         //     // Update old settings to new single setting
@@ -292,6 +274,49 @@ Class ZM_Settings Extends ZM_Form_Fields {
 
 
     /**
+     * Get the default options as set settings array
+     * These options are formatted into an associative array. Since being
+     * mapped as an associative array each key MUST be unique!
+     *
+     * @filter {namespace}_all_default_options $defaults
+     * @return The formatted and filtered array
+     *
+     */
+    public function get_default_options(){
+
+        $defaults = array();
+
+        foreach( $this->settings as $k => $v ){
+            foreach( $v['fields'] as $field ){
+                if ( isset( $field['std'] ) ){
+                    $defaults[ $field['id'] ] = $field['std'];
+                }
+            }
+        }
+
+        return apply_filters( $this->namespace . '_all_default_options', $defaults );
+
+    }
+
+    /**
+     * Merge the default options with the options array
+     * This allows us to use settings from the settings array, as apposed
+     * to having the user visit the settings, press "save" and save the
+     * defaults to the db. More info can be found on [using sane defaults in themes](https://make.wordpress.org/themes/2014/07/09/using-sane-defaults-in-themes/).
+     *
+     * @return Associative array containing options from DB and defaults.
+     */
+    public function get_sane_options(){
+
+        $options = $this->get_options();
+        $defaults = $this->get_default_options();
+
+        return array_merge( $defaults, $options );
+
+    }
+
+
+    /**
      * Get a single option value from the settings array
      *
      * @since 1.0.0
@@ -299,7 +324,7 @@ Class ZM_Settings Extends ZM_Form_Fields {
      * @return Option from database
      */
     public function get_option( $key='', $default=false ) {
-        $options = $this->get_options();
+        $options = $this->get_sane_options();
 
         $value = ! empty( $options[ $key ] ) ? $options[ $key ] : $default;
         $value = apply_filters( "{$this->namespace}_get_option", $value, $key, $default );
@@ -405,7 +430,7 @@ Class ZM_Settings Extends ZM_Form_Fields {
 
 
         // Loop through the whitelist and unset any that are empty for the tab being saved
-        $options = $this->get_options();
+        $options = $this->get_sane_options();
         if ( ! empty( $settings[ $tab ] ) ) {
             foreach ( $settings[ $tab ]['fields'] as $field ) {
                 $key = $field['id'];
@@ -522,8 +547,11 @@ Class ZM_Settings Extends ZM_Form_Fields {
      */
     public function admin_enqueue_scripts(){
         $screen = get_current_screen();
-        if ( $screen->id == 'settings_page_' . $this->namespace ){
-            wp_enqueue_style( $this->namespace . 'admin-script', $this->dir_url . 'assets/stylesheets/admin.css', '', '1.0' );
+
+        // use this filter to change the page_id to load css/js if the settings is
+        // in a submenu
+        if ( $screen->id == apply_filters( $this->namespace . '_screen_id', 'settings_page_' . $this->namespace ) ){
+            wp_enqueue_style( $this->namespace . 'admin-style', $this->dir_url . 'assets/stylesheets/admin.css', '', '1.0' );
         }
     }
 
