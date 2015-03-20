@@ -96,9 +96,16 @@ Class ZM_Settings Extends ZM_Form_Fields {
                     $value = null;
                 }
 
-                $attr = $this->get_attributes( $field );
 
-                $temp = array(
+                // Determine the callback
+                if ( method_exists( $this, 'do_' . $field['type'] ) ){
+                    $callback = array( $this, 'do_' . $field['type'] );
+                } else {
+                    $callback = array( $this, 'missing_callback' );
+                }
+
+                // These are extra params passed into our function/method
+                $params = array_merge( $this->get_attributes( $field ), array(
                     'echo'        => true,
                     'id'          => isset( $field['id'] ) ? $field['id'] : null,
                     'value'       => $value,
@@ -106,21 +113,15 @@ Class ZM_Settings Extends ZM_Form_Fields {
                     'name'        => $this->namespace . '[' . $field['id'] . ']',
                     'title'       => '',
                     'namespace'   => $this->namespace
-                ); // These are extra params based into our function/method
-
-                $final = array_merge( $attr, $temp );
+                ) );
 
                 add_settings_field(
                     $this->namespace.'[' . $field['id'] . ']', // ID
-                    $title, // Title
-
-                    method_exists( $this, 'do_' . $field['type'] )
-                        ? array( $this, 'do_' . $field['type'] )
-                        : array( $this, 'missing_callback' ), // Callback
-
-                    $this->namespace . '_' . $id, // Page
-                    $this->namespace . '_' . $id, // Section
-                    $final
+                    $title,                                    // Title
+                    $callback,                                 // Callback
+                    $this->namespace . '_' . $id,              // Page
+                    $this->namespace . '_' . $id,              // Section
+                    $params                                    // Params
                 );
             }
         }
@@ -254,6 +255,25 @@ Class ZM_Settings Extends ZM_Form_Fields {
         $settings = get_option( $this->namespace );
 
         // if ( empty( $settings ) ){
+
+        //     foreach( $this->settings as $k => $v ){
+
+        //         foreach( $v['fields'] as $vv ){
+        //             if ( is_array( $vv ) ){
+        //                 if ( isset( $vv['value'] ) ){
+        //                     $settings[ $vv['id'] ] = $vv['value'];
+        //                 } elseif ( isset( $vv['std'] ) ) {
+        //                     $settings[ $vv['id'] ] = $vv['std'];
+        //                 } else {
+        //                     $settings[ $vv['id'] ] = null;
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
+
+
+        // if ( empty( $settings ) ){
             // $settings = array();
         //     // Update old settings to new single setting
         //     $settings = array(
@@ -311,7 +331,13 @@ Class ZM_Settings Extends ZM_Form_Fields {
         $options = $this->get_options();
         $defaults = $this->get_default_options();
 
-        return array_merge( $defaults, $options );
+        if ( empty( $options ) ){
+            $options = $this->get_default_options();
+        } else {
+            $options = array_merge( $defaults, $options );
+        }
+
+        return $options;
 
     }
 
@@ -428,9 +454,9 @@ Class ZM_Settings Extends ZM_Form_Fields {
             }
         }
 
-
         // Loop through the whitelist and unset any that are empty for the tab being saved
         $options = $this->get_sane_options();
+
         if ( ! empty( $settings[ $tab ] ) ) {
             foreach ( $settings[ $tab ]['fields'] as $field ) {
                 $key = $field['id'];
@@ -472,6 +498,16 @@ Class ZM_Settings Extends ZM_Form_Fields {
      */
     public function do_header(){
         echo '<hr />';
+    }
+
+
+    /**
+     * Renders a static field
+     *
+     * This is a field which the content is not saved into the *_options table
+     */
+    public function do_static( $args ){
+        echo $args['std'];
     }
 
 
@@ -563,9 +599,12 @@ Class ZM_Settings Extends ZM_Form_Fields {
      * @return $tab (string) The default tab to use for saving settings/options
      */
     public function get_tab(){
+
         // If we have a referrer tab
-        if ( isset( $_POST['tab'] ) ){
-            $tab = $_POST['tab'];
+        parse_str( $_POST['_wp_http_referer'], $referrer );
+
+        if ( isset( $referrer['tab'] ) ){
+            $tab = $referrer['tab'];
         }
 
         else {
