@@ -586,9 +586,11 @@ Class ZM_Settings Extends ZM_Form_Fields {
 
         // use this filter to change the page_id to load css/js if the settings is
         // in a submenu
-        if ( $screen->id == apply_filters( $this->namespace . '_screen_id', 'settings_page_' . $this->namespace ) ){
-            wp_enqueue_style( $this->namespace . 'admin-style', $this->dir_url . 'assets/stylesheets/admin.css', '', '1.0' );
-        }
+        // if ( $screen->id == apply_filters( $this->namespace . '_screen_id', 'settings_page_' . $this->namespace ) ){
+        //     wp_enqueue_style( $this->namespace . 'admin-style', $this->dir_url . 'assets/stylesheets/admin.css', '', '1.0' );
+        // }
+
+        wp_enqueue_style( $this->namespace . 'admin-style', $this->dir_url . 'assets/stylesheets/admin.css', '', '1.0' );
     }
 
 
