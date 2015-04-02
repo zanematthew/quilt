@@ -1,6 +1,6 @@
 # Description
 
-This library provides a simplified way to interact with the [overly verbosee](http://codex.wordpress.org/images/7/7e/editing-settings-api-example.png) [WordPress settings API](http://codex.wordpress.org/Settings_API) via an array.
+This library provides a simplified way to interact with the [overly verbose](http://codex.wordpress.org/images/7/7e/editing-settings-api-example.png) [WordPress settings API](http://codex.wordpress.org/Settings_API) via an array.
 
 This will handle;
 
@@ -16,6 +16,59 @@ This will handle;
 You can copy paste the following and place it in your `functions.php`, or in a plugin file. Note
 you must require the needed php files.
 
+A simplified version:
+```
+define( 'PRODUCT_URL', plugin_dir_url( __FILE__ ) );
+define( 'PRODUCT_PATH', plugin_dir_path( __FILE__ ) );
+define( 'PRODUCT_NAMESPACE', 'foo' );
+
+require PRODUCT_PATH . '/lib/zm-form-fields/zm-form-fields.php';
+require PRODUCT_PATH . '/lib/zm-settings/zm-settings.php';
+
+function my_function_setup(){
+
+    global $my_settings_obj;
+    $my_settings_obj = new ZM_Settings(
+        PRODUCT_NAMESPACE,
+        array(
+            'foo' => array(
+                'title' => 'Foo',
+                'fields' => array(
+                    array(
+                        'id' => 'foo_header',
+                        'title' => 'My Header',
+                        'type' => 'header'
+                        ),
+                    array(
+                        'id' => 'foo_usage',
+                        'title' => 'Usage',
+                        'type' => 'desc',
+                        'desc' => 'A description.'
+                        ),
+                    array(
+                        'id' => 'some_text_field',
+                        'title' => 'Text Field',
+                        'type' => 'text'
+                        )
+                )
+            )
+        ),
+        array(
+            'menu_title' => 'My Theme Options',
+            'page_title' => 'My Theme – An awesome theme'
+        ),
+        'theme',
+        array(
+            'dir_url_form_fields' => PRODUCT_URL . '/lib/zm-form-fields/'
+        )
+    );
+
+    global $my_product_settings;
+}
+add_action( 'init', 'my_function_setup' );
+```
+
+A verbose version:
 ```
 /**
  * You can use `get_template_directory()` if this is being used inside of a theme
@@ -108,6 +161,7 @@ function my_function_setup(){
 }
 add_action( 'init', 'my_function_setup' );
 ```
+
 
 ## Usage – Retrieving the Settings
 
