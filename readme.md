@@ -10,33 +10,6 @@ This will handle;
 1. Display settings as a single page or tab interface
 1. Determine to display settings as "theme options" or as plugin "settings"
 
-# Supported Field Types
-
-The currently supported field types (settings types) are:
-
-* header – An arbitrary header normally used to define a section
-* desc – An arbitrary description normally used after a header
-* checkbox – A single checkbox
-* checkboxes – A collection of checkboxes
-* radio – A single radio box
-* radio boxes – A collection of radio boxes
-* text – A simple text field
-* url – An HTML5 URL field
-* email – A text field which sanitizes emails
-* hidden – A hidden text field
-* textarea – A textarea
-* css_textarea – An advanced textarea which only allows CSS
-* textarea_emails – An advanced textarea which only saves emails on a new line and forward slashed comments
-* textarea_ip – An advanced textarea which only saves IP address on a new line and forward slashed comments
-* select – A single select box
-* multiselect – A multiselect box
-* us_state_select – A select box pre-populate with US states
-* upload – An upload field, which uses the WP Media Library
-* thickbox_url – A url (internal or external), which displays content using WordPress' "thickbox"
-* touchtime – tbd
-* html – An arbitrary field which displays any HTML you've added
-
-*Note: All fields are sanitized accordingly.*
 
 # Usage
 
@@ -49,6 +22,7 @@ you must require the needed php files.
  */
 define( 'PRODUCT_URL', plugin_dir_url( __FILE__ ) );
 define( 'PRODUCT_PATH', plugin_dir_path( __FILE__ ) );
+define( 'PRODUCT_NAMESPACE', 'foo' );
 
 require PRODUCT_PATH . '/lib/zm-form-fields/zm-form-fields.php';
 require PRODUCT_PATH . '/lib/zm-settings/zm-settings.php';
@@ -59,7 +33,7 @@ function my_function_setup(){
      * All settings will be saved to the db in a single serialized record in
      * the *_options table.
      */
-    $namespace = 'my-namespace';
+    $namespace = PRODUCT_NAMESPACE';
 
 
     /**
@@ -128,7 +102,7 @@ function my_function_setup(){
 
     /**
      * You can retrieve the setting via the method `get_options()`, note you can
-     * also retrieve the unfiltered setting via `get_options( 'my-namespace' )`
+     * also retrieve the unfiltered setting via `get_options( PRODUCT_NAMESPACE )`
      */
     global $my_product_settings;
 }
@@ -334,4 +308,55 @@ $settings = array(
         )
     )
 );
- ```
+```
+
+# Sanitizing
+
+```
+function product_custom_sanitize( $input ){
+
+    // Do something with $input
+
+    // Display a message if needed
+    if ( isset( $error['message'] ) && isset( $error['type'] ) ){
+        add_settings_error(
+            PRODUCT_NAMESPACE,
+            'gitlab_enabled',
+            $error['message'],
+            $error['type']
+        );
+    }
+
+    return $input;
+
+}
+add_filter( PRODUCT_NAMESPACE . '_sanitize_my_field', 'product_custom_sanitize' );
+```
+
+# Supported Field Types
+
+The currently supported field types (settings types) are:
+
+* header – An arbitrary header normally used to define a section
+* desc – An arbitrary description normally used after a header
+* checkbox – A single checkbox
+* checkboxes – A collection of checkboxes
+* radio – A single radio box
+* radio boxes – A collection of radio boxes
+* text – A simple text field
+* url – An HTML5 URL field
+* email – A text field which sanitizes emails
+* hidden – A hidden text field
+* textarea – A textarea
+* css_textarea – An advanced textarea which only allows CSS
+* textarea_emails – An advanced textarea which only saves emails on a new line and forward slashed comments
+* textarea_ip – An advanced textarea which only saves IP address on a new line and forward slashed comments
+* select – A single select box
+* multiselect – A multiselect box
+* us_state_select – A select box pre-populate with US states
+* upload – An upload field, which uses the WP Media Library
+* thickbox_url – A url (internal or external), which displays content using WordPress' "thickbox"
+* touchtime – tbd
+* html – An arbitrary field which displays any HTML you've added
+
+*Note: All fields are sanitized accordingly.*
