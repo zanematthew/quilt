@@ -502,16 +502,6 @@ Class ZM_Settings Extends ZM_Form_Fields {
 
 
     /**
-     * Renders a static field
-     *
-     * This is a field which the content is not saved into the *_options table
-     */
-    public function do_static( $args ){
-        echo $args['std'];
-    }
-
-
-    /**
      * Renders description fields.
      *
      * @since 1.0.0
