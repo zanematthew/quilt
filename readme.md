@@ -50,16 +50,30 @@ This allows for the library to be bundled in with a theme as "theme options".
  the URLs for the form fields dependency
 
 
-## Usage – Plugin settings
+## Usage
+
+Ideally this could should be placed in your `init` hook.
 
 ```
-require get_template_directory() . '/lib/zm-form-fields/zm-form-fields.php';
+
+/**
+ * Or use `get_template_directory()` if this is being used inside of a theme
+ */
+require plugin_dir_path( __FILE__ ) . '/lib/zm-form-fields/zm-form-fields.php';
 require plugin_dir_path( __FILE__ ) . '/lib/zm-settings/zm-settings.php';
 
 function my_function_setup(){
 
+    /**
+     * All settings will be saved to the db in a single serialized record in
+     * the *_options table.
+     */
     $namespace = 'my-namespace';
 
+
+    /**
+     * For a full list see "Supported Field Types"
+     */
     $settings = array(
         'foo' => array(
             'title' => 'Foo',
@@ -84,79 +98,32 @@ function my_function_setup(){
         )
     );
 
-    $labels = array(
-        'menu_title' => 'My Plugin Settings',
-        'page_title' => 'My Plugin – An awesome plugin'
-    );
 
-    $type = 'plugin';
-
-    $paths = array(
-        'dir_url_form_fields' => plugin_dir_url( __FILE__ ) . 'lib/zm-form-fields/'
-    );
-
-    global $my_settings_obj;
-    $my_settings_obj = new ZM_Settings(
-    	$namespace,
-    	$settings,
-    	$labels,
-    	$type,
-    	$paths
-    );
-
-    global $my_plugin_settings;
-    $my_plugin_settings = $my_settings->get_options();
-}
-add_action( 'init', 'my_function_setup' );
-```
-
-## Usage – Theme Options
-
-All thats needed is to assign the `type` to be 'theme' and assign the `dir_url_form_fields` to `get_stylesheet_dir_uri()`. Full snippet is below.
-
-
-```
-require get_template_directory() . '/lib/zm-form-fields/zm-form-fields.php';
-require get_template_directory() . '/lib/zm-settings/zm-settings.php';
-
-function my_function_setup(){
-
-    $namespace = 'my-namespace';
-
-    $settings = array(
-        'foo' => array(
-            'title' => 'Foo',
-            'fields' => array(
-                array(
-                    'id' => 'foo_header',
-                    'title' => 'My Header',
-                    'type' => 'header'
-                    ),
-                array(
-                    'id' => 'foo_usage',
-                    'title' => 'Usage',
-                    'type' => 'desc',
-                    'desc' => 'A description.'
-                    ),
-                array(
-                    'id' => 'some_text_field',
-                    'title' => 'Text Field',
-                    'type' => 'text'
-                    )
-            )
-        )
-    );
-
+    /**
+     * Set the menu label, and the page title
+     */
     $labels = array(
         'menu_title' => 'My Theme Options',
         'page_title' => 'My Theme – An awesome theme'
     );
 
+
+    /**
+     * Allowed: 'plugin', 'theme'.
+     * 'plugin', will show the options as a sub-menu in
+     * 'General Settings'.
+     * 'theme', will show the options as a sub-menu in 'Appearances'
+     */
     $type = 'theme';
 
+
+    /**
+     * Specify the URL for loading needed form field CSS and JS.
+     */
     $paths = array(
-        'dir_url_form_fields' => get_template_directory() . '/lib/zm-form-fields/'
+        'dir_url_form_fields' => plugin_dir_url( __FILE__ ) . '/lib/zm-form-fields/'
     );
+
 
     global $my_settings_obj;
     $my_settings_obj = new ZM_Settings(
@@ -167,8 +134,14 @@ function my_function_setup(){
         $paths
     );
 
-    global $my_theme_settings;
-    $my_theme_settings = $my_settings_obj->get_options();
+
+    /**
+     * You can retrieve the setting via the method `get_options()`, note you can
+     * also retrieve the unfiltered setting via `get_options( 'my-namespace' )`
+     */
+    global $my_product_settings;
+    $my_product_settings = $my_settings_obj->get_options( 'some_text_field' );
+
 }
 add_action( 'init', 'my_function_setup' );
 ```
@@ -181,9 +154,7 @@ You can retrieve your settings via the `get_options()` method, and assign this t
 $my_settigns_obj = ZM_Settings();
 
 global $my_settings;
-$my_settings = $my_settigns_obj->get_options();
-
-echo $my_settings['some_value'];
+echo $my_settigns_obj->get_options( 'some-value' );
 ```
 
 # Sample Settings
