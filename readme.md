@@ -1,12 +1,12 @@
-# Description 
+# Description
 
-This library provides a simplified way to interacte with the [overly verbose](http://codex.wordpress.org/images/7/7e/editing-settings-api-example.png) [WordPress settings API](http://codex.wordpress.org/Settings_API) via an array. 
+This library provides a simplified way to interact with the [overly verbosee](http://codex.wordpress.org/images/7/7e/editing-settings-api-example.png) [WordPress settings API](http://codex.wordpress.org/Settings_API) via an array.
 
-Once you've created a settings array the class will handle form submission, admin notices, dynamically generate actions and filters, display settings as a page or tab interface, and determine to display settings as "theme options" or a site "settings" while interanlly using the WordPress settings API.
+Once you've created a settings array the class will handle form submission, admin notices, dynamically generate actions and filters, display settings as a page or tab interface, and determine to display settings as "theme options" or a site "settings" while internally using the WordPress settings API.
 
 # Supported Field Types
 
-The currently supported field types (settings types) are: 
+The currently supported field types (settings types) are:
 
 * header – An arbitrary header normally used to define a section
 * desc – An arbitrary description normally used after a header
@@ -24,7 +24,7 @@ The currently supported field types (settings types) are:
 * textarea_ip – An advanced textarea which only saves IP address on a new line and forward slashed comments
 * select – A single select box
 * multiselect – A multiselect box
-* us_state_select – A select box prepopulate with US states
+* us_state_select – A select box pre-populate with US states
 * upload – An upload field, which uses the WP Media Library
 * thickbox_url – A url (internal or external), which displays content using WordPress' "thickbox"
 * touchtime – tbd
@@ -32,9 +32,9 @@ The currently supported field types (settings types) are:
 
 *Note: All fields are sanitized accordingly.*
 
-# Usage 
+# Usage
 
-This library has the [ZM Form Fields](http://labs.zanematthew.com/zm/zm-form-fields) as a dependency. The dependency is designed to have the path and URL passed in via a parameter using one of the following WordPress functions: `plugin_dir_url( __FILE__ )`, `get_stylesheet_dir_uri()`, etc. 
+This library has the [ZM Form Fields](http://labs.zanematthew.com/zm/zm-form-fields) as a dependency. The dependency is designed to have the path and URL passed in via a parameter using one of the following WordPress functions: `plugin_dir_url( __FILE__ )`, `get_stylesheet_dir_uri()`, etc.
 
 This allows for the library to be bundled in with a theme as "theme options".
 
@@ -47,7 +47,7 @@ This allows for the library to be bundled in with a theme as "theme options".
  plugin or theme
    1. labels: Specifiy the menu title and page title
    1. paths: The `dir_url_form_fields` are needed to derive
- the URLs for the form fields dependcy
+ the URLs for the form fields dependency
 
 
 ## Usage – Plugin settings
@@ -56,10 +56,10 @@ This allows for the library to be bundled in with a theme as "theme options".
 require get_template_directory() . '/lib/zm-form-fields/zm-form-fields.php';
 require plugin_dir_path( __FILE__ ) . '/lib/zm-settings/zm-settings.php';
 
-function my_function_setup(){   
-    
+function my_function_setup(){
+
     $namespace = 'my-namespace';
-        
+
     $settings = array(
         'foo' => array(
             'title' => 'Foo',
@@ -74,36 +74,36 @@ function my_function_setup(){
                     'title' => 'Usage',
                     'type' => 'desc',
                     'desc' => 'A description.'
-                    ),            
+                    ),
                 array(
                     'id' => 'some_text_field',
                     'title' => 'Text Field',
                     'type' => 'text'
-                    )            
+                    )
             )
         )
     );
-    
+
     $labels = array(
         'menu_title' => 'My Plugin Settings',
         'page_title' => 'My Plugin – An awesome plugin'
     );
-    
-    $type = 'plugin'; 
-        
+
+    $type = 'plugin';
+
     $paths = array(
         'dir_url_form_fields' => plugin_dir_url( __FILE__ ) . 'lib/zm-form-fields/'
     );
-    
+
     global $my_settings_obj;
-    $my_settings_obj = new ZM_Settings( 
-    	$namespace, 
-    	$settings, 
-    	$labels, 
-    	$type, 
-    	$paths 
+    $my_settings_obj = new ZM_Settings(
+    	$namespace,
+    	$settings,
+    	$labels,
+    	$type,
+    	$paths
     );
-    
+
     global $my_plugin_settings;
     $my_plugin_settings = $my_settings->get_options();
 }
@@ -173,7 +173,7 @@ function my_function_setup(){
 add_action( 'init', 'my_function_setup' );
 ```
 
-## Usage – Retrieveing the Settings
+## Usage – Retrieving the Settings
 
 You can retrieve your settings via the `get_options()` method, and assign this to a global variable.
 
