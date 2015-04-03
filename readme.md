@@ -22,13 +22,13 @@ you must require the needed php files.
 A simplified version:
 
 ```
-require PRODUCT_PATH . '/lib/zm-form-fields/zm-form-fields.php';
-require PRODUCT_PATH . '/lib/zm-settings/zm-settings.php';
-
-
 define( 'PRODUCT_URL', plugin_dir_url( __FILE__ ) );
 define( 'PRODUCT_PATH', plugin_dir_path( __FILE__ ) );
 define( 'PRODUCT_NAMESPACE', 'foo' );
+
+
+require PRODUCT_PATH . '/lib/zm-form-fields/zm-form-fields.php';
+require PRODUCT_PATH . '/lib/zm-settings/zm-settings.php';
 
 
 function my_function_setup(){
