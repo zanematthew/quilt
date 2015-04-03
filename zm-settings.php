@@ -198,7 +198,12 @@ Class ZM_Settings Extends ZM_Form_Fields {
         // We have a single tab instance, no need to use tabs
         if ( count( $tab_ids ) == 1 ) {
             $tabs = $this->settings();
+
             $title = '<h3>' . $tabs[ $current_tab ]['title'] . '</h3>';
+            $desc = empty( $tabs[ $current_tab ]['desc'] ) ? null : '<p>' . $tabs[ $current_tab ]['desc'] . '</p>';
+
+            $tabs = $title . $desc;
+
         }
 
         // We have multiple settings, lets build tabs
