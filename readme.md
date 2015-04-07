@@ -9,12 +9,17 @@ This will handle;
 1. Dynamically generate actions and filters
 1. Display settings as a single page or tab interface
 1. Determine to display settings as "theme options" or as plugin "settings"
+1. Visit your WordPress admin
 
 
 # Usage
 
-1. Include the needed PHP files
-1. Add the PHP code for the settings
+1. Download the following PHP files:
+1. Place them in `lib/`
+1. Require them in your code
+1. Set the defines
+
+get_template_directory_uri()
 
 You can copy paste the following and place it in your `functions.php`, or in a plugin file. Note
 you must require the needed php files.
