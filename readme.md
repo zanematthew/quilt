@@ -425,3 +425,7 @@ The currently supported field types (settings types) are:
 * html – An arbitrary field which displays any HTML you've added
 
 *Note: All fields are sanitized accordingly.*
+
+# Uninstall Settings
+
+In order to have your plugin remove settings/options during plugin uninstall simply create an `uninstall.php` script, and follow the official [WordPress](http://codex.wordpress.org/Function_Reference/register_uninstall_hook#uninstall.php) `uninstall.php` way of removing settings/options.
