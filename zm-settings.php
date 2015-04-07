@@ -12,10 +12,9 @@ Class ZM_Settings Extends ZM_Form_Fields {
      * @param $type         (bool) Plugin or Theme, this determines to add the menu link to the "Appearance" menu or "Settings"
      * @param $settings     (array) An array of settings
      * @param $paths        (array) Array of paths to where the settings are, relative to the plugin/theme, expects a trailing slash
-     * @param $labels       (array) An array of labels (Menu name, Page name)
      *
      */
-    public function __construct( $namespace=null, $settings=null, $labels=null, $type=null, $paths=null ){
+    public function __construct( $namespace=null, $settings=null, $type=null, $paths=null ){
 
         $this->namespace = $this->sanitize_namespace( $namespace );
 
@@ -132,8 +131,8 @@ Class ZM_Settings Extends ZM_Form_Fields {
     public function admin_menu(){
 
         $params = apply_filters( 'zm_settings_admin_menu_' . $this->namespace . '_filter', array(
-            'title' => $this->namespace_to_page_title( $this->namespace ),
-            'menu_title' => $this->namespace_to_menu_title( $this->namespace ),
+            'title' => $this->namespace_to_page_title(),
+            'menu_title' => $this->namespace_to_menu_title(),
             'permission' => 'manage_options',
             'namespace' => $this->namespace,
             'template' => array( &$this, 'load_template' ),
@@ -226,7 +225,7 @@ Class ZM_Settings Extends ZM_Form_Fields {
         ?>
         <div class="wrap">
             <div id="icon-options-general" class="icon32"><br></div>
-            <h2><?php echo $this->namespace_to_page_title( $this->namespace ); ?></h2>
+            <h2><?php echo $this->namespace_to_page_title(); ?></h2>
             <?php echo $below_title; ?>
             <form action="options.php" method="POST" id="<?php echo $this->namespace; ?>_settings_form" class="<?php echo $current_tab; ?>-settings">
                 <?php echo $tabs; ?>
@@ -620,20 +619,32 @@ Class ZM_Settings Extends ZM_Form_Fields {
     }
 
 
-    public function namespace_to_page_title( $namespace=null ){
+    /**
+     * Converts a sanitized namespace to be used a page title.
+     *
+     * @param
+     * @return $string A string to be used a the page title
+     */
+    public function namespace_to_page_title(){
 
-        $title = ucwords( str_replace( array( '-', '_' ), ' ', $namespace ) );
+        $title = ucwords( str_replace( array( '-', '_' ), ' ', $this->namespace ) );
 
-        return apply_filters( $this->namespace . '_page_title', $title, $namespace );
+        return apply_filters( $this->namespace . '_page_title', $title, $this->namespace );
 
     }
 
 
-    public function namespace_to_menu_title( $namespace=null ){
+    /**
+     * Converts a sanitized namespace to be used a menu title.
+     *
+     * @param
+     * @return $string A string to be used a the menu title
+     */
+    public function namespace_to_menu_title(){
 
-        $title = ucwords( str_replace( array( '-', '_' ), ' ', $namespace ) );
+        $title = ucwords( str_replace( array( '-', '_' ), ' ', $this->namespace ) );
 
-        return apply_filters( $this->namespace . '_menu_title', $title, $namespace );
+        return apply_filters( $this->namespace . '_menu_title', $title, $this->namespace );
 
     }
 }
