@@ -3,7 +3,6 @@
 if ( ! class_exists( 'ZM_Settings' ) ) :
 Class ZM_Settings Extends ZM_Form_Fields {
 
-
     /**
      * WordPress hooks to be ran during init
      *
@@ -18,15 +17,10 @@ Class ZM_Settings Extends ZM_Form_Fields {
      */
     public function __construct( $namespace=null, $settings=null, $labels=null, $type=null, $paths=null ){
 
-        $this->namespace = $namespace;
+        $this->namespace = $this->sanitize_namespace( $namespace );
 
         // @todo presumed 'plugin' type
         $this->setting_type = $type;
-
-        // @todo possibly derive this for plugins: http://codex.wordpress.org/Function_Reference/get_plugin_data
-        // Set the page title to the plugin name, and set the settings description to the plugin description?
-        $this->menu_title = $labels['menu_title'];
-        $this->page_title = $labels['page_title'];
 
         $this->dir_url = empty( $paths['dir_url'] ) ? plugin_dir_url( __FILE__ ) : trailingslashit( $paths['dir_url'] );
         $this->dir_path = empty( $paths['dir_path'] ) ? plugin_dir_url( __FILE__ ) : trailingslashit( $paths['dir_path'] );
@@ -138,8 +132,8 @@ Class ZM_Settings Extends ZM_Form_Fields {
     public function admin_menu(){
 
         $params = apply_filters( 'zm_settings_admin_menu_' . $this->namespace . '_filter', array(
-            'title' => $this->page_title,
-            'menu_title' => $this->menu_title,
+            'title' => $this->namespace_to_page_title( $this->namespace ),
+            'menu_title' => $this->namespace_to_menu_title( $this->namespace ),
             'permission' => 'manage_options',
             'namespace' => $this->namespace,
             'template' => array( &$this, 'load_template' ),
@@ -232,7 +226,7 @@ Class ZM_Settings Extends ZM_Form_Fields {
         ?>
         <div class="wrap">
             <div id="icon-options-general" class="icon32"><br></div>
-            <h2><?php echo $this->page_title; ?></h2>
+            <h2><?php echo $this->namespace_to_page_title( $this->namespace ); ?></h2>
             <?php echo $below_title; ?>
             <form action="options.php" method="POST" id="<?php echo $this->namespace; ?>_settings_form" class="<?php echo $current_tab; ?>-settings">
                 <?php echo $tabs; ?>
@@ -609,6 +603,38 @@ Class ZM_Settings Extends ZM_Form_Fields {
         }
 
         return apply_filters( "{$this->namespace}_default_tab", $tab );
+    }
+
+
+    /**
+     * Should return a string that is safe to be used in function names, as a variable, etc.
+     * free of illegal characters.
+     *
+     * @param $namespace (string)   The namespace to sanitize
+     * @return $namespace (string)  The namespace free of illegal characters.
+     */
+    public function sanitize_namespace( $namespace=null ){
+
+        return str_replace( array('-', ' ' ), '_', $namespace );
+
+    }
+
+
+    public function namespace_to_page_title( $namespace=null ){
+
+        $title = ucwords( str_replace( array( '-', '_' ), ' ', $namespace ) );
+
+        return apply_filters( $this->namespace . '_page_title', $title, $namespace );
+
+    }
+
+
+    public function namespace_to_menu_title( $namespace=null ){
+
+        $title = ucwords( str_replace( array( '-', '_' ), ' ', $namespace ) );
+
+        return apply_filters( $this->namespace . '_menu_title', $title, $namespace );
+
     }
 }
 endif;
