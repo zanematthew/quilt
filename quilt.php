@@ -3,6 +3,8 @@
 if ( ! class_exists( 'Quilt' ) ) :
 Class Quilt Extends ZM_Form_Fields {
 
+    public $version = '1.0';
+
     /**
      * WordPress hooks to be ran during init
      *
@@ -91,8 +93,8 @@ Class Quilt Extends ZM_Form_Fields {
 
 
                 // Determine the callback
-                if ( method_exists( $this, 'do_' . $field['type'] ) ){
-                    $callback = array( $this, 'do_' . $field['type'] );
+                if ( method_exists( $this, 'do' . $field['type'] ) ){
+                    $callback = array( $this, 'do' . $field['type'] );
                 } else {
                     $callback = array( $this, 'missingCallback' );
                 }
@@ -373,7 +375,7 @@ Class Quilt Extends ZM_Form_Fields {
             return;
 
         $settings = $this->settings();
-        $tab = $this->get_tab();
+        $tab = $this->getTab();
         $input = $input ? $input : array();
         $tmp = array();
 
@@ -494,7 +496,7 @@ Class Quilt Extends ZM_Form_Fields {
      * @param array $args Arguments passed by the setting
      * @return void
      */
-    public function do_header(){
+    public function doHeader(){
         echo '<hr />';
     }
 
@@ -506,7 +508,7 @@ Class Quilt Extends ZM_Form_Fields {
      * @param array $args Arguments passed by the setting
      * @return void
      */
-    public function do_desc( $args ) {
+    public function doDesc( $args ) {
         echo '<p>' . $args['desc'] . '</p>';
     }
 
@@ -518,7 +520,7 @@ Class Quilt Extends ZM_Form_Fields {
      * @param array $args Arguments passed by the setting
      * @return void
      */
-    public function do_license( $args ) {
+    public function doLicense( $args ) {
 
         // Use this to pass in the license data
         $args = apply_filters( 'zm_settings_license_args', $args );
@@ -578,7 +580,7 @@ Class Quilt Extends ZM_Form_Fields {
         //     wp_enqueue_style( $this->namespace . 'admin-style', $this->dir_url . 'assets/stylesheets/admin.css', '', '1.0' );
         // }
 
-        wp_enqueue_style( $this->namespace . 'admin-style', $this->dir_url . 'assets/stylesheets/admin.css', '', '1.0' );
+        wp_enqueue_style( $this->namespace . 'admin-style', $this->dir_url . 'assets/stylesheets/admin.css', '', $this->version );
     }
 
 
@@ -588,7 +590,7 @@ Class Quilt Extends ZM_Form_Fields {
      * @param
      * @return $tab (string) The default tab to use for saving settings/options
      */
-    public function get_tab(){
+    public function getTab(){
 
         // If we have a referrer tab
         parse_str( $_POST['_wp_http_referer'], $referrer );
