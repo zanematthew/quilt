@@ -1,7 +1,7 @@
 <?php
 
-if ( ! class_exists( 'ZM_Settings' ) ) :
-Class ZM_Settings Extends ZM_Form_Fields {
+if ( ! class_exists( 'Quilt' ) ) :
+Class Quilt Extends ZM_Form_Fields {
 
     /**
      * WordPress hooks to be ran during init
@@ -27,18 +27,18 @@ Class ZM_Settings Extends ZM_Form_Fields {
 
         if ( isset( $paths['dir_url_form_fields'] ) ){
             $this->dir_url_form_fields = trailingslashit( $paths['dir_url_form_fields'] );
-            add_filter( 'zm_form_fields_dir_url', array( &$this, 'zm_form_fields_dir_url' ) );
+            add_filter( 'zm_form_fields_dir_url', array( &$this, 'zmFormFieldsDirUrl' ) );
         }
 
         $this->settings = $settings;
 
-        add_action( 'admin_menu', array( &$this, 'admin_menu' ) );
-        add_action( 'admin_init', array( &$this, 'register_settings' ) );
-        add_action( 'admin_enqueue_scripts', array( &$this, 'admin_enqueue_scripts') );
+        add_action( 'admin_menu', array( &$this, 'adminMenu' ) );
+        add_action( 'admin_init', array( &$this, 'registerSettings' ) );
+        add_action( 'admin_enqueue_scripts', array( &$this, 'adminEnqueueScripts') );
 
     }
 
-    public function zm_form_fields_dir_url(){
+    public function zmFormFieldsDirUrl(){
         return $this->dir_url_form_fields;
     }
 
@@ -60,10 +60,10 @@ Class ZM_Settings Extends ZM_Form_Fields {
      *
      * @since 1.0.0.
      */
-    public function register_settings(){
+    public function registerSettings(){
 
         // Get our current options, these are passed into our field array
-        $options = $this->get_sane_options();
+        $options = $this->getSaneOptions();
 
         foreach( $this->settings() as $id => $section ) {
 
@@ -94,7 +94,7 @@ Class ZM_Settings Extends ZM_Form_Fields {
                 if ( method_exists( $this, 'do_' . $field['type'] ) ){
                     $callback = array( $this, 'do_' . $field['type'] );
                 } else {
-                    $callback = array( $this, 'missing_callback' );
+                    $callback = array( $this, 'missingCallback' );
                 }
 
                 // These are extra params passed into our function/method
@@ -119,7 +119,7 @@ Class ZM_Settings Extends ZM_Form_Fields {
             }
         }
 
-        register_setting( $this->namespace, $this->namespace, array( &$this, 'sanitize_single' ) );
+        register_setting( $this->namespace, $this->namespace, array( &$this, 'sanitizeSingle' ) );
     }
 
 
@@ -128,14 +128,14 @@ Class ZM_Settings Extends ZM_Form_Fields {
      *
      * @since 1.0.0
      */
-    public function admin_menu(){
+    public function adminMenu(){
 
         $params = apply_filters( 'zm_settings_admin_menu_' . $this->namespace . '_filter', array(
-            'title' => $this->namespace_to_page_title(),
-            'menu_title' => $this->namespace_to_menu_title(),
+            'title' => $this->namespaceToPageTitle(),
+            'menu_title' => $this->namespaceToMenuTitle(),
             'permission' => 'manage_options',
             'namespace' => $this->namespace,
-            'template' => array( &$this, 'load_template' ),
+            'template' => array( &$this, 'loadTemplate' ),
             'submenu' => 'options-general.php'
             ) );
 
@@ -171,7 +171,7 @@ Class ZM_Settings Extends ZM_Form_Fields {
      *
      * @since 1.0.0
      */
-    public function load_template(){
+    public function loadTemplate(){
 
         $tab = isset( $_GET['tab'] ) ? $_GET['tab'] : null; // If we wanted to we can set a current tab
         $current_tab = false;
@@ -225,7 +225,7 @@ Class ZM_Settings Extends ZM_Form_Fields {
         ?>
         <div class="wrap">
             <div id="icon-options-general" class="icon32"><br></div>
-            <h2><?php echo $this->namespace_to_page_title(); ?></h2>
+            <h2><?php echo $this->namespaceToPageTitle(); ?></h2>
             <?php echo $below_title; ?>
             <form action="options.php" method="POST" id="<?php echo $this->namespace; ?>_settings_form" class="<?php echo $current_tab; ?>-settings">
                 <?php echo $tabs; ?>
@@ -248,7 +248,7 @@ Class ZM_Settings Extends ZM_Form_Fields {
      * @since 1.0.0
      * @return Settings/options
      */
-    public function get_options(){
+    public function getOptions(){
 
         $settings = get_option( $this->namespace );
 
@@ -300,7 +300,7 @@ Class ZM_Settings Extends ZM_Form_Fields {
      * @return The formatted and filtered array
      *
      */
-    public function get_default_options(){
+    public function getDefaultOptions(){
 
         $defaults = array();
 
@@ -324,13 +324,13 @@ Class ZM_Settings Extends ZM_Form_Fields {
      *
      * @return Associative array containing options from DB and defaults.
      */
-    public function get_sane_options(){
+    public function getSaneOptions(){
 
-        $options = $this->get_options();
-        $defaults = $this->get_default_options();
+        $options = $this->getOptions();
+        $defaults = $this->getDefaultOptions();
 
         if ( empty( $options ) ){
-            $options = $this->get_default_options();
+            $options = $this->getDefaultOptions();
         } else {
             $options = array_merge( $defaults, $options );
         }
@@ -347,8 +347,8 @@ Class ZM_Settings Extends ZM_Form_Fields {
      * @param $key The option key to get, $default, the default if any
      * @return Option from database
      */
-    public function get_option( $key='', $default=false ) {
-        $options = $this->get_sane_options();
+    public function getOption( $key='', $default=false ) {
+        $options = $this->getSaneOptions();
 
         $value = ! empty( $options[ $key ] ) ? $options[ $key ] : $default;
         $value = apply_filters( "{$this->namespace}_get_option", $value, $key, $default );
@@ -367,7 +367,7 @@ Class ZM_Settings Extends ZM_Form_Fields {
      *
      * @since 1.0.0
      */
-    public function sanitize_single( $input=array() ){
+    public function sanitizeSingle( $input=array() ){
 
         if ( empty( $_POST['_wp_http_referer'] ) )
             return;
@@ -394,7 +394,7 @@ Class ZM_Settings Extends ZM_Form_Fields {
                         case 'textarea_email_template' :
                         case 'checkbox' :
                         case 'radio' :
-                            $input[ $key ] = $this->sanitize_default( $value );
+                            $input[ $key ] = $this->sanitizeDefault( $value );
                             break;
 
                         case 'checkboxes' :
@@ -435,7 +435,7 @@ Class ZM_Settings Extends ZM_Form_Fields {
                             break;
 
                         default:
-                            $input[ $key ] = $this->sanitize_default( $value );
+                            $input[ $key ] = $this->sanitizeDefault( $value );
                             break;
                     }
 
@@ -453,7 +453,7 @@ Class ZM_Settings Extends ZM_Form_Fields {
         }
 
         // Loop through the whitelist and unset any that are empty for the tab being saved
-        $options = $this->get_sane_options();
+        $options = $this->getSaneOptions();
 
         if ( ! empty( $settings[ $tab ] ) ) {
             foreach ( $settings[ $tab ]['fields'] as $field ) {
@@ -477,12 +477,12 @@ Class ZM_Settings Extends ZM_Form_Fields {
      *
      * @since 1.0.0
      */
-    public function sanitize_default( $input=null ){
+    public function sanitizeDefault( $input=null ){
         return esc_attr( $input );
     }
 
 
-    public function missing_callback(){
+    public function missingCallback(){
         echo 'No callback';
     }
 
@@ -569,7 +569,7 @@ Class ZM_Settings Extends ZM_Form_Fields {
      * @param array $args Arguments passed by the setting
      * @return void
      */
-    public function admin_enqueue_scripts(){
+    public function adminEnqueueScripts(){
         $screen = get_current_screen();
 
         // use this filter to change the page_id to load css/js if the settings is
@@ -625,7 +625,7 @@ Class ZM_Settings Extends ZM_Form_Fields {
      * @param
      * @return $string A string to be used a the page title
      */
-    public function namespace_to_page_title(){
+    public function namespaceToPageTitle(){
 
         $title = ucwords( str_replace( array( '-', '_' ), ' ', $this->namespace ) );
 
@@ -640,7 +640,7 @@ Class ZM_Settings Extends ZM_Form_Fields {
      * @param
      * @return $string A string to be used a the menu title
      */
-    public function namespace_to_menu_title(){
+    public function namespaceToMenuTitle(){
 
         $title = ucwords( str_replace( array( '-', '_' ), ' ', $this->namespace ) );
 
