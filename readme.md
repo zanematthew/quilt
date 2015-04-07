@@ -64,10 +64,6 @@ function my_function_setup(){
                 )
             )
         ),
-        array(
-            'menu_title' => 'My Theme Options',
-            'page_title' => 'My Theme – An awesome theme'
-        ),
         'theme',
         array(
             'dir_url_form_fields' => PRODUCT_URL . '/lib/zm-form-fields/'
@@ -129,15 +125,6 @@ function my_function_setup(){
 
 
     /**
-     * Set the menu label, and the page title
-     */
-    $labels = array(
-        'menu_title' => 'My Theme Options',
-        'page_title' => 'My Theme – An awesome theme'
-    );
-
-
-    /**
      * Allowed: 'plugin', 'theme'.
      * 'plugin', will show the options as a sub-menu in
      * 'General Settings'.
@@ -158,7 +145,6 @@ function my_function_setup(){
     $my_settings_obj = new ZM_Settings(
         $namespace,
         $settings,
-        $labels,
         $type,
         $paths
     );
