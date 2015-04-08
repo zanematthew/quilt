@@ -73,12 +73,17 @@ Class Quilt Extends ZM_Form_Fields {
         global $pagenow;
 
         if ( $pagenow == 'themes.php' ){
-            add_settings_error(
-                $this->namespace,
-                'a_code_here',
-                __( 'Options saved.', $this->namespace ),
-                'updated'
-            );
+
+            $args = wp_parse_args( $_SERVER['REQUEST_URI'] );
+
+            if ( isset( $args['settings-updated'] ) && $args['settings-updated'] == true ){
+                add_settings_error(
+                    $this->namespace,
+                    'a_code_here',
+                    __( 'Options saved.', $this->namespace ),
+                    'updated'
+                );
+            }
         }
 
     }
