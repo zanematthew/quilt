@@ -3,30 +3,57 @@
 if ( ! class_exists( 'Quilt' ) ) :
 Class Quilt Extends ZM_Form_Fields {
 
-    public $version = '1.0';
+
+    /**
+     * Current version number
+     *
+     * This is used in conjunction when scripts/css are loaded, the version number is appended to
+     * the end of the URL.
+     *
+     * @since 1.0.0
+     */
+    public $version = '1.0.0';
+
+
+    /**
+     * The type of settings/options, i.e., Plugin or Theme (note use Theme Customizer as much
+     * as possible!).
+     *
+     * @since 1.0.0
+     */
+    public $type;
+
+
+    /**
+     * The settings array
+     *
+     * @since 1.0.0
+     */
+    public $settings;
+
 
     /**
      * WordPress hooks to be ran during init
      *
      * @since 1.0.0
      *
-     * @param $namespace    The unique name space to be saved in the options table
-     * @param $type         (bool) Plugin or Theme, this determines to add the menu link to the "Appearance" menu or "Settings"
-     * @param $settings     (array) An array of settings
-     * @param $paths        (array) Array of paths to where the settings are, relative to the plugin/theme, expects a trailing slash
-     *
+     * @param $namespace    (string)    The unique name space to be saved in the options table
+     * @param $settings     (array)     An array of settings
+     * @param $type         (bool)      Plugin or Theme, this determines to add the menu link to
+     *                                  the "Appearance" menu or "Settings"
+     * @param $paths        (array)     Array of paths to where the settings are, relative to
+     *                                  the plugin/theme, expects a trailing slash
      */
-    public function __construct( $namespace=null, $settings=null, $type=null, $paths=null ){
+    public function __construct( $namespace=null, $settings=null, $type=null ){
 
         $this->namespace = $this->sanitizeNamespace( $namespace );
-
-        // @todo presumed 'plugin' type
         $this->setting_type = $type;
 
-        $this->dir_url = empty( $paths['dir_url'] ) ? plugin_dir_url( __FILE__ ) : trailingslashit( $paths['dir_url'] );
-        $this->dir_path = empty( $paths['dir_path'] ) ? plugin_dir_url( __FILE__ ) : trailingslashit( $paths['dir_path'] );
+        $paths = $this->getPaths();
+        $this->dir_url = $paths['dir_url'];
+        $this->dir_path = $paths['dir_path'];
 
-
+        // @todo huh?
         if ( isset( $paths['dir_url_form_fields'] ) ){
             $this->dir_url_form_fields = trailingslashit( $paths['dir_url_form_fields'] );
             add_filter( 'zm_form_fields_dir_url', array( &$this, 'zmFormFieldsDirUrl' ) );
@@ -40,6 +67,36 @@ Class Quilt Extends ZM_Form_Fields {
 
     }
 
+
+    /**
+     * Sets the absolute and URL paths for either using this as a plugin setting or theme
+     * settings
+     *
+     * @since 1.0.0
+     * @return  $paths  (array)     An array of containing absolute and URLs paths
+     */
+    public function getPaths(){
+
+        if ( $this->setting_type == 'plugin' ){
+            $defaults = array(
+                'dir_path' => plugin_dir_path( __FILE__ ),
+                'dir_url' => plugin_dir_url( __FILE__ )
+            );
+        } else {
+            $defaults = array(
+                'dir_path' => trailingslashit( get_stylesheet_directory() ),
+                'dir_url' => trailingslashit( get_stylesheet_directory_uri() )
+            );
+        }
+
+        $paths = apply_filters( $this->namespace . '_paths', $defaults );
+
+        return $paths;
+
+    }
+
+
+    // @todo huh?
     public function zmFormFieldsDirUrl(){
         return $this->dir_url_form_fields;
     }
@@ -48,23 +105,26 @@ Class Quilt Extends ZM_Form_Fields {
     /**
      * Return our settings
      *
-     * @since 1.0.0.
+     * @since 1.0.0
+     * @return $settings    (array)     The settings as a multi-dimensional array
      */
     public function settings(){
-        $settings = apply_filters( $this->namespace . '_settings', $this->settings );
-        return $settings;
+
+        return apply_filters( $this->namespace . '_settings', $this->settings );
+
     }
 
 
     /**
-     * This function adds all our settings sections, settings fields, and registers
-     * a single setting, which holds all of our settings.
+     * This function adds all our settings sections, settings form fields, and registers
+     * a single setting, which holds all of our settings, i.e., get_option( 'my_product' ) will
+     * contain the raw settings as seen in the *_options table.
      *
-     * @since 1.0.0.
+     * @since   1.0.0
+     * @return  void
      */
     public function registerSettings(){
 
-        // Get our current options, these are passed into our field array
         $options = $this->getSaneOptions();
 
         foreach( $this->settings() as $id => $section ) {
@@ -77,9 +137,6 @@ Class Quilt Extends ZM_Form_Fields {
             );
 
             foreach ( $section['fields'] as $field ) {
-
-                $name = isset( $field['id'] ) ? $field['id'] : '';
-                $title = isset( $field['title'] ) ? $field['title'] : '';
 
                 if ( isset( $field['value'] ) ) {
                     $value = $options[ $field['id'] ];
@@ -113,6 +170,7 @@ Class Quilt Extends ZM_Form_Fields {
                     'namespace'   => $this->namespace
                 ) );
 
+                $title = isset( $field['title'] ) ? $field['title'] : '';
                 add_settings_field(
                     $this->namespace.'[' . $field['id'] . ']', // ID
                     $title,                                    // Title
