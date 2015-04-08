@@ -32,6 +32,8 @@ Class Quilt Extends ZM_Form_Fields {
     public $settings;
 
 
+    public $app = 'quilt';
+
     /**
      * WordPress hooks to be ran during init
      *
@@ -68,6 +70,12 @@ Class Quilt Extends ZM_Form_Fields {
     }
 
 
+    /**
+     * Displays the setting error.
+     *
+     * @since 1.0.0
+     * @return void
+     */
     public function adminNoticesAction() {
 
         global $pagenow;
@@ -79,7 +87,7 @@ Class Quilt Extends ZM_Form_Fields {
             if ( isset( $args['settings-updated'] ) && $args['settings-updated'] == true ){
                 add_settings_error(
                     $this->namespace,
-                    'a_code_here',
+                    'noon',
                     __( 'Options saved.', $this->namespace ),
                     'updated'
                 );
@@ -205,6 +213,7 @@ Class Quilt Extends ZM_Form_Fields {
         }
 
         register_setting( $this->namespace, $this->namespace, array( &$this, 'sanitizeSingle' ) );
+
     }
 
 
@@ -246,8 +255,11 @@ Class Quilt Extends ZM_Form_Fields {
             );
 
         } else {
+
             wp_die('Invalid setting_type');
+
         }
+
     }
 
 
@@ -258,7 +270,8 @@ Class Quilt Extends ZM_Form_Fields {
      */
     public function loadTemplate(){
 
-        $tab = isset( $_GET['tab'] ) ? $_GET['tab'] : null; // If we wanted to we can set a current tab
+        // If we wanted to we can set a current tab
+        $tab = isset( $_GET['tab'] ) ? $_GET['tab'] : null;
         $current_tab = false;
         $tab_ids = array();
 
@@ -310,14 +323,14 @@ Class Quilt Extends ZM_Form_Fields {
 
         $below_tabs = apply_filters( "{$this->namespace}_below_tabs", null );
         $below_title = apply_filters( "{$this->namespace}_below_title", null );
-        $description = apply_filters( "{$this->namespace}_footer", __( 'Thank you for using the ZM Settings API.', $this->namespace ) );
+        $description = apply_filters( "{$this->namespace}_footer", __( 'Thank you for using Quilt.', $this->namespace ) );
 
         ?>
         <div class="wrap">
             <div id="icon-options-general" class="icon32"><br></div>
             <h2><?php echo $this->namespaceToPageTitle(); ?></h2>
             <?php echo $below_title; ?>
-            <form action="options.php" method="POST" id="<?php echo $this->namespace; ?>_settings_form" class="<?php echo $current_tab; ?>-settings">
+            <form action="options.php" method="POST" id="<?php echo $this->namespace; ?>_settings_form" class="<?php echo $this->namespace; ?> <?php echo $current_tab; ?>-settings">
                 <?php echo $tabs; ?>
                 <?php echo $below_tabs; ?>
                 <table class="form-table">
@@ -341,41 +354,6 @@ Class Quilt Extends ZM_Form_Fields {
     public function getOptions(){
 
         $settings = get_option( $this->namespace );
-
-        // if ( empty( $settings ) ){
-
-        //     foreach( $this->settings as $k => $v ){
-
-        //         foreach( $v['fields'] as $vv ){
-        //             if ( is_array( $vv ) ){
-        //                 if ( isset( $vv['value'] ) ){
-        //                     $settings[ $vv['id'] ] = $vv['value'];
-        //                 } elseif ( isset( $vv['std'] ) ) {
-        //                     $settings[ $vv['id'] ] = $vv['std'];
-        //                 } else {
-        //                     $settings[ $vv['id'] ] = null;
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
-
-
-        // if ( empty( $settings ) ){
-            // $settings = array();
-        //     // Update old settings to new single setting
-        //     $settings = array(
-        //         'keep_me_logged_in_enabled' => ( get_option( 'ajax_login_register_keep_me_logged_in' ) == "on" ? 1 : null ),
-        //         'login_redirect_legacy' => get_option( 'ajax_login_register_redirect' ),
-        //         'additional_styling' => get_option( 'ajax_login_register_additional_styling' ),
-        //         'form_layout' => get_option( 'ajax_login_register_default_style' ),
-        //         'login_handle' => get_option( 'ajax_login_register_advanced_usage_login' ),
-        //         'register_handle' => get_option( 'ajax_login_register_advanced_usage_register' ),
-        //         'facebook_url' => get_option( 'url' ),
-        //         'facebook_app_id' => get_option( 'app_id' )
-        //         );
-        //     $r = update_option( 'zm_private_site_settings', $settings );
-        // }
 
         return $settings;
     }
@@ -406,11 +384,13 @@ Class Quilt Extends ZM_Form_Fields {
 
     }
 
+
     /**
      * Merge the default options with the options array
      * This allows us to use settings from the settings array, as apposed
      * to having the user visit the settings, press "save" and save the
-     * defaults to the db. More info can be found on [using sane defaults in themes](https://make.wordpress.org/themes/2014/07/09/using-sane-defaults-in-themes/).
+     * defaults to the db. More info can be found on
+     * [using sane defaults in themes](https://make.wordpress.org/themes/2014/07/09/using-sane-defaults-in-themes/).
      *
      * @return Associative array containing options from DB and defaults.
      */
@@ -438,12 +418,14 @@ Class Quilt Extends ZM_Form_Fields {
      * @return Option from database
      */
     public function getOption( $key='', $default=false ) {
+
         $options = $this->getSaneOptions();
 
         $value = ! empty( $options[ $key ] ) ? $options[ $key ] : $default;
         $value = apply_filters( "{$this->namespace}_get_option", $value, $key, $default );
 
         return apply_filters( "{$this->namespace}_get_setting_" . $key, $value, $key, $default );
+
     }
 
 
@@ -564,17 +546,26 @@ Class Quilt Extends ZM_Form_Fields {
 
 
     /**
-     * Just return the input being saved, no default sanitize.
+     * Just return the input being saved.
      *
      * @since 1.0.0
      */
     public function sanitizeDefault( $input=null ){
+
         return esc_attr( $input );
+
     }
 
 
+    /**
+     * Missing callback
+     *
+     * @since 1.0.0
+     */
     public function missingCallback(){
+
         echo 'No callback';
+
     }
 
 
@@ -586,7 +577,9 @@ Class Quilt Extends ZM_Form_Fields {
      * @return void
      */
     public function doHeader(){
+
         echo '<hr />';
+
     }
 
 
@@ -598,7 +591,9 @@ Class Quilt Extends ZM_Form_Fields {
      * @return void
      */
     public function doDesc( $args ) {
+
         echo '<p>' . $args['desc'] . '</p>';
+
     }
 
 
@@ -612,7 +607,7 @@ Class Quilt Extends ZM_Form_Fields {
     public function doLicense( $args ) {
 
         // Use this to pass in the license data
-        $args = apply_filters( 'zm_settings_license_args', $args );
+        $args = apply_filters( $this->namspace . '_license_args', $args );
 
         $button_text = __('Activate', $this->namespace );
         $status_text = null;
@@ -642,12 +637,12 @@ Class Quilt Extends ZM_Form_Fields {
          * If we have a license we show the Activate/Deactivate along with the status
          */
         if ( ! empty( $args['value'] ) ) : ?>
-            <input type="hidden" name="<?php echo $this->namespace; ?>[license_action]" id="zm_settings_license_action" value="" />
-            <input type="hidden" name="<?php echo $this->namespace; ?>[previous_license]" id="zm_settings_previous_license" value="<?php echo $args['value']; ?>" />
+            <input type="hidden" name="<?php echo $this->namespace; ?>[license_action]" id="<?php echo $this->namespace; ?>_license_action" value="" />
+            <input type="hidden" name="<?php echo $this->namespace; ?>[previous_license]" id="<?php echo $this->namespace; ?>_previous_license" value="<?php echo $args['value']; ?>" />
 
-            <input type="button" name="zm_alr_pro_activate_button" data-zm_license_action="<?php echo $action; ?>" id="zm_license_activate_button" class="button" value="<?php echo $button_text; ?>" />
+            <input type="button" name="<?php echo $this->namespace; ?>_license_activate_button" data-<?php echo $this->namespace; ?>_license_action="<?php echo $action; ?>" id="<?php echo $this->namespace; ?>_license_activate_button" class="button" value="<?php echo $button_text; ?>" />
             <?php echo $status_text; ?>
-            <?php do_action( 'zm_settings_below_license' ); ?>
+            <?php do_action( $this->namspace . '_below_license' ); ?>
         <?php endif; ?>
         <?php
     }
@@ -669,7 +664,20 @@ Class Quilt Extends ZM_Form_Fields {
         //     wp_enqueue_style( $this->namespace . 'admin-style', $this->dir_url . 'assets/stylesheets/admin.css', '', '1.0' );
         // }
 
-        wp_enqueue_style( $this->namespace . 'admin-style', $this->dir_url . 'assets/stylesheets/admin.css', '', $this->version );
+
+        $styles = apply_filters( $this->namespace . '_styles', array(
+            array(
+                'handle' => $this->app . '-admin-style',
+                'src' => $this->dir_url . 'assets/stylesheets/admin.css',
+                'deps' => '',
+                'ver' => $this->version,
+                'media' => ''
+            )
+        ), $this->namespace );
+
+        foreach( $styles as $style ){
+            wp_enqueue_style( $style['handle'], $style['src'], $style['deps'], $style['ver'], $style['media'] );
+        }
     }
 
 
