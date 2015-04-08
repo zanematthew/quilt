@@ -64,8 +64,25 @@ Class Quilt Extends ZM_Form_Fields {
         add_action( 'admin_menu', array( &$this, 'adminMenu' ) );
         add_action( 'admin_init', array( &$this, 'registerSettings' ) );
         add_action( 'admin_enqueue_scripts', array( &$this, 'adminEnqueueScripts') );
+        add_action( 'admin_notices', array( &$this, 'adminNoticesAction' ) );
+    }
+
+
+    public function adminNoticesAction() {
+
+        global $pagenow;
+
+        if ( $pagenow == 'themes.php' ){
+            add_settings_error(
+                $this->namespace,
+                'a_code_here',
+                __( 'Options saved.', $this->namespace ),
+                'updated'
+            );
+        }
 
     }
+
 
 
     /**
@@ -208,7 +225,7 @@ Class Quilt Extends ZM_Form_Fields {
                 $params['title'],
                 $params['menu_title'],
                 $params['permission'],
-                $params['namespace'],
+                $params['namespace'] . '_options',
                 $params['template']
             );
 
@@ -219,7 +236,7 @@ Class Quilt Extends ZM_Form_Fields {
                 $params['title'],
                 $params['menu_title'],
                 $params['permission'],
-                $params['namespace'],
+                $params['namespace'] . '_settings',
                 $params['template']
             );
 
@@ -281,9 +298,14 @@ Class Quilt Extends ZM_Form_Fields {
             $tabs = '<h2 class="nav-tab-wrapper">' . $tabs . '</h2>';
         }
 
-        $below_tabs = apply_filters( "{$this->namespace}_below_settings_tabs", null );
-        $below_title = apply_filters( "{$this->namespace}_below_settings_title", null );
-        $description = apply_filters( "{$this->namespace}_settings_footer", __( 'Thank you for using the ZM Settings API.', $this->namespace ) );
+        global $pagenow;
+        if ( $pagenow == 'themes.php' ){
+            settings_errors( $this->namespace );
+        }
+
+        $below_tabs = apply_filters( "{$this->namespace}_below_tabs", null );
+        $below_title = apply_filters( "{$this->namespace}_below_title", null );
+        $description = apply_filters( "{$this->namespace}_footer", __( 'Thank you for using the ZM Settings API.', $this->namespace ) );
 
         ?>
         <div class="wrap">
