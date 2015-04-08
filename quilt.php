@@ -224,7 +224,7 @@ Class Quilt Extends ZM_Form_Fields {
      */
     public function adminMenu(){
 
-        $params = apply_filters( 'zm_settings_admin_menu_' . $this->namespace . '_filter', array(
+        $params = apply_filters( $this->namespace . '_admin_menu', array(
             'title' => $this->namespaceToPageTitle(),
             'menu_title' => $this->namespaceToMenuTitle(),
             'permission' => 'manage_options',
@@ -321,9 +321,9 @@ Class Quilt Extends ZM_Form_Fields {
             settings_errors( $this->namespace );
         }
 
-        $below_tabs = apply_filters( "{$this->namespace}_below_tabs", null );
-        $below_title = apply_filters( "{$this->namespace}_below_title", null );
-        $description = apply_filters( "{$this->namespace}_footer", __( 'Thank you for using Quilt.', $this->namespace ) );
+        $below_tabs = apply_filters( $this->namespace . '_below_tabs', null );
+        $below_title = apply_filters( $this->namespace . '_below_title', null );
+        $description = apply_filters( $this->namespace . '_footer', __( 'Thank you for using Quilt.', $this->namespace ) );
 
         ?>
         <div class="wrap">
@@ -422,9 +422,9 @@ Class Quilt Extends ZM_Form_Fields {
         $options = $this->getSaneOptions();
 
         $value = ! empty( $options[ $key ] ) ? $options[ $key ] : $default;
-        $value = apply_filters( "{$this->namespace}_get_option", $value, $key, $default );
+        $value = apply_filters( $this->namespace . '_get_option', $value, $key, $default );
 
-        return apply_filters( "{$this->namespace}_get_setting_" . $key, $value, $key, $default );
+        return apply_filters( $this->namespace . '_get_setting_' . $key, $value, $key, $default );
 
     }
 
@@ -607,7 +607,7 @@ Class Quilt Extends ZM_Form_Fields {
     public function doLicense( $args ) {
 
         // Use this to pass in the license data
-        $args = apply_filters( $this->namspace . '_license_args', $args );
+        $args = apply_filters( $this->namespace . '_license_args', $args );
 
         $button_text = __('Activate', $this->namespace );
         $status_text = null;
@@ -642,7 +642,7 @@ Class Quilt Extends ZM_Form_Fields {
 
             <input type="button" name="<?php echo $this->namespace; ?>_license_activate_button" data-<?php echo $this->namespace; ?>_license_action="<?php echo $action; ?>" id="<?php echo $this->namespace; ?>_license_activate_button" class="button" value="<?php echo $button_text; ?>" />
             <?php echo $status_text; ?>
-            <?php do_action( $this->namspace . '_below_license' ); ?>
+            <?php do_action( $this->namespace . '_below_license' ); ?>
         <?php endif; ?>
         <?php
     }
@@ -700,7 +700,7 @@ Class Quilt Extends ZM_Form_Fields {
             $tab = key( $this->settings() );
         }
 
-        return apply_filters( "{$this->namespace}_default_tab", $tab );
+        return apply_filters( $this->namespace . '_default_tab', $tab );
     }
 
 

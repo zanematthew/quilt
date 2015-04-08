@@ -415,3 +415,213 @@ The currently supported field types (settings types) are:
 # Uninstall Settings
 
 In order to have your plugin remove settings/options during plugin uninstall simply create an `uninstall.php` script, and follow the official [WordPress](http://codex.wordpress.org/Function_Reference/register_uninstall_hook#uninstall.php) `uninstall.php` way of removing settings/options.
+
+# Hooks
+
+## Actions
+
+
+### Description
+
+This is fired after the licnese form field.
+
+`<?php do_action( NAMESPACE . '_below_license' ); ?>`
+
+## Filters
+
+### Description
+
+This is used to filter the URL path, and absolute path of where the settings are.
+
+`<?php add_filter( NAMESPACE . '_paths', 'filter_function_name', 10, 1 ); ?>`
+
+### Parameters
+
+When used as Plugin settings:
+
+```
+$defaults = array(
+    'dir_path' => plugin_dir_path( __FILE__ ),
+    'dir_url' => plugin_dir_url( __FILE__ )
+);
+```
+
+When used as Theme Options:
+
+```
+$defaults = array(
+    'dir_path' => trailingslashit( get_stylesheet_directory() ),
+    'dir_url' => trailingslashit( get_stylesheet_directory_uri() )
+);
+```
+
+### Description
+
+Filter used to filter the entire settings array.
+
+`<?php add_filter( NAMESPACE . '_settings', 'filter_function_name', 10, 1 ); ?>`
+
+### Parameters
+
+The mulit-dimensional array containing the settings:
+
+`$settings`
+
+### Description
+
+`<?php add_filter( NAMESPACE . '_admin_menu', 10, 1); ?>`
+
+### Parameters
+
+The arguments same arguments as seen in `add_theme_page` and `add_submenu_page`:
+
+```
+array(
+    'title' => // namespace converted to page title
+    'menu_title' => // namespace converted to menu title
+    'permission' => 'manage_options',
+    'namespace' => // namespace
+    'template' => 'loadTemplate'
+    'submenu' => 'options-general.php'
+    )
+```
+
+### Description
+
+Used to add additional content below the tabs.
+
+`<?php add_filter( NAMESPACE . '_below_tabs', 'filter_function_name', 10 ); ?>`
+
+
+### Description
+
+Used to add additional content below the title.
+
+`<?php add_filter( NAMESPACE . '_below_title', 'filter_function_name', 10 ); ?>`
+
+
+### Description
+
+Used to add additional content in the footer.
+
+`<?php add_filter( NAMESPACE . '_footer', 'filter_function_name', 10, 1 ); ?>`
+
+
+### Description
+
+The default options set in the settings array that are assigned as the `std` value.
+
+`<?php add_filter( NAMESPACE . '_all_default_options', 'filter_function_name', 10, 1 ); ?>`
+
+### Parameters
+
+The value set in the settings array as `std`:
+
+`$defaults`
+
+### Description
+
+A single option saved in the options table:
+
+`<?php add_filter( NAMESPACE . '_get_option', $value, $key, $default ); ?>`
+
+### Parameters
+
+```
+$value The current value
+$key The unique key
+$default The default value
+```
+
+### Description
+
+A single unique key:
+
+`<?php add_filter( NAMESPACE . '_get_setting_' . $key, $value, $key, $default ); ?>`
+
+### Parameters
+
+```
+$value The current value
+$key The unique key
+$default The default value
+```
+
+### Description
+
+A custom sanitize filter based on type:
+
+`<?php add_filter( NAMESPACE . '_sanitize_' . $type, $key ); ?>`
+
+### Parameters
+
+`$key` The unique key set via the settings array in the `id` key.
+
+### Description
+
+A custom sanitize filter based on a unique key:
+
+`<?php add_filter( NAMESPACE . '_sanitize_' . $key, $key ); ?>`
+
+### Parameters
+
+`$key` The unique key set via the settings array in the `id` key.
+
+### Description
+
+Allows to pass in additional license data for the license type.
+
+`<?php add_filter( NAMESPACE . '_license_args', 'filter_function_name', 10, 1 ); ?>`
+
+
+### Description
+
+An array of stylesheets:
+
+`<?php add_filter( NAMESPACE . '_styles', 10, 2 ); ?>`
+
+### Parameters
+
+```
+array(
+    'handle' => // unique id
+    'src' => // URL
+    'deps' => // dependencies
+    'ver' => // version
+    'media' => ''
+)
+```
+
+### Description
+
+Allows the default tab to be set
+
+`<?php add_filter( NAMESPACE . '_default_tab', 'filter_function_name', 10, 1 ); ?>`
+
+### Parameters
+
+Current tab: `$tab`
+
+### Description
+
+Allows the page title to be set:
+
+`<?php add_filter( NAMESPACE . '_page_title', 'filter_function_name', 10, 2 ); ?>`
+
+### Parameters
+
+`$title` Current title
+
+`$namespace` Namespace
+
+### Description
+
+Allows the page title to be set:
+
+`<?php add_filter( NAMESPACE . '_menu_title', 'filter_function_name', 10, 2 ); ?>`
+
+### Parameters
+
+`$title` Current title
+
+`$namespace` Namespace
