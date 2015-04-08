@@ -18,7 +18,7 @@ Class Quilt Extends ZM_Form_Fields {
      */
     public function __construct( $namespace=null, $settings=null, $type=null, $paths=null ){
 
-        $this->namespace = $this->sanitize_namespace( $namespace );
+        $this->namespace = $this->sanitizeNamespace( $namespace );
 
         // @todo presumed 'plugin' type
         $this->setting_type = $type;
@@ -93,14 +93,17 @@ Class Quilt Extends ZM_Form_Fields {
 
 
                 // Determine the callback
-                if ( method_exists( $this, 'do' . $field['type'] ) ){
-                    $callback = array( $this, 'do' . $field['type'] );
+                // @todo document, this also allows for method overloading
+                $method_name = 'do' . ucwords( $field['type'] );
+
+                if ( method_exists( $this, $method_name ) ){
+                    $callback = array( $this, $method_name );
                 } else {
                     $callback = array( $this, 'missingCallback' );
                 }
 
                 // These are extra params passed into our function/method
-                $params = array_merge( $this->get_attributes( $field ), array(
+                $params = array_merge( $this->getAttributes( $field ), array(
                     'echo'        => true,
                     'id'          => isset( $field['id'] ) ? $field['id'] : null,
                     'value'       => $value,
@@ -425,7 +428,7 @@ Class Quilt Extends ZM_Form_Fields {
                             break;
 
                         case 'textarea_emails' :
-                            $input[ $key ] = $this->sanitize_textarea_emails( $value );
+                            $input[ $key ] = $this->sanitizeEmails( $value );
                             break;
 
                         case 'textarea_ip' :
@@ -433,7 +436,7 @@ Class Quilt Extends ZM_Form_Fields {
                             break;
 
                         case 'touchtime' :
-                            $input[ $key ] = $this->sanitize_touchtime( $value );
+                            $input[ $key ] = $this->sanitizeTouchtime( $value );
                             break;
 
                         default:
@@ -614,7 +617,7 @@ Class Quilt Extends ZM_Form_Fields {
      * @param $namespace (string)   The namespace to sanitize
      * @return $namespace (string)  The namespace free of illegal characters.
      */
-    public function sanitize_namespace( $namespace=null ){
+    public function sanitizeNamespace( $namespace=null ){
 
         return str_replace( array('-', ' ' ), '_', $namespace );
 
