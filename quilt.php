@@ -424,15 +424,16 @@ Class Quilt Extends ZM_Form_Fields {
                             break;
 
                         case 'multiselect' :
-                            $input[ $key ] = $this->sanitize_multiselect( $value );
+                            $input[ $key ] = $this->sanitizeMultiselect( $value );
                             break;
 
-                        case 'textarea_emails' :
+                        case 'emails' :
                             $input[ $key ] = $this->sanitizeEmails( $value );
                             break;
 
-                        case 'textarea_ip' :
-                            $input[ $key ] = $this->sanitize_textarea_ip( $value );
+                        // Yes, ips
+                        case 'ips' :
+                            $input[ $key ] = $this->sanitizeIps( $value );
                             break;
 
                         case 'touchtime' :
