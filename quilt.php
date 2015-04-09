@@ -726,7 +726,7 @@ Class Quilt Extends ZM_Form_Fields {
      */
     public function namespaceToPageTitle(){
 
-        $title = ucwords( str_replace( array( '-', '_' ), ' ', $this->namespace ) );
+        $title = ucwords( $this->sanitizeNamespace( $this->namespace ) );
 
         return apply_filters( $this->namespace . '_page_title', $title, $this->namespace );
 
@@ -741,7 +741,7 @@ Class Quilt Extends ZM_Form_Fields {
      */
     public function namespaceToMenuTitle(){
 
-        $title = ucwords( str_replace( array( '-', '_' ), ' ', $this->namespace ) );
+        $title = ucwords( $this->sanitizeNamespace( $this->namespace ) );
 
         return apply_filters( $this->namespace . '_menu_title', $title, $this->namespace );
 
