@@ -64,10 +64,7 @@ function my_function_setup(){
                 )
             )
         ),
-        'theme',
-        array(
-            'dir_url_form_fields' => PRODUCT_URL . '/lib/zm-form-fields/'
-        )
+        'theme'
     );
 
     global $my_product_settings;
@@ -130,23 +127,14 @@ function my_function_setup(){
      * 'General Settings'.
      * 'theme', will show the options as a sub-menu in 'Appearances'
      */
-    $type = 'theme';
-
-
-    /**
-     * Specify the URL for loading needed form field CSS and JS.
-     */
-    $paths = array(
-        'dir_url_form_fields' => PRODUCT_URL . '/lib/zm-form-fields/'
-    );
+    $type = 'plugin';
 
 
     global $my_settings_obj;
     $my_settings_obj = new ZM_Settings(
         $namespace,
         $settings,
-        $type,
-        $paths
+        $type
     );
 
 
