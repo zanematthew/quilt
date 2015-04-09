@@ -93,7 +93,7 @@ function my_function_setup(){
      * All settings will be saved to the db in a single serialized record in
      * the *_options table.
      */
-    $namespace = PRODUCT_NAMESPACE';
+    $namespace = PRODUCT_NAMESPACE;
 
 
     /**
