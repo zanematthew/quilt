@@ -1,3 +1,7 @@
+# Quilt
+
+4-5 word elevator pitch
+
 # Description
 
 This library provides a simplified way to interact with the [overly verbose](http://codex.wordpress.org/images/7/7e/editing-settings-api-example.png) [WordPress settings API](http://codex.wordpress.org/Settings_API) via an array.
@@ -11,18 +15,18 @@ This will handle;
 1. Determine to display settings as "theme options" or as plugin "settings"
 1. Visit your WordPress admin
 
-
 # Usage
 
 1. Download the following PHP files:
-1. Place them in `lib/`
 1. Require them in your code
 1. Set the defines
-
-get_template_directory_uri()
+1. Build your array
 
 You can copy paste the following and place it in your `functions.php`, or in a plugin file. Note
 you must require the needed php files.
+
+Note: You can use `get_template_directory_uri()` and `get_template_directory()` if you are using
+this inside of a theme.
 
 A simplified version:
 
@@ -32,14 +36,14 @@ define( 'PRODUCT_PATH', plugin_dir_path( __FILE__ ) );
 define( 'PRODUCT_NAMESPACE', 'foo' );
 
 
-require PRODUCT_PATH . '/lib/zm-form-fields/zm-form-fields.php';
-require PRODUCT_PATH . '/lib/zm-settings/zm-settings.php';
+require PRODUCT_PATH . '/lumber/lumber.php';
+require PRODUCT_PATH . '/quilt/quilt.php';
 
 
 function my_function_setup(){
 
     global $my_settings_obj;
-    $my_settings_obj = new ZM_Settings(
+    $my_settings_obj = new Quilt(
         PRODUCT_NAMESPACE,
         array(
             'foo' => array(
@@ -81,8 +85,8 @@ define( 'PRODUCT_URL', plugin_dir_url( __FILE__ ) );
 define( 'PRODUCT_PATH', plugin_dir_path( __FILE__ ) );
 define( 'PRODUCT_NAMESPACE', 'foo' );
 
-require PRODUCT_PATH . '/lib/zm-form-fields/zm-form-fields.php';
-require PRODUCT_PATH . '/lib/zm-settings/zm-settings.php';
+require PRODUCT_PATH . '/lib/lumber/lumber.php';
+require PRODUCT_PATH . '/lib/quilt/quilt.php';
 
 function my_function_setup(){
 
@@ -131,7 +135,7 @@ function my_function_setup(){
 
 
     global $my_settings_obj;
-    $my_settings_obj = new ZM_Settings(
+    $my_settings_obj = new Quilt(
         $namespace,
         $settings,
         $type
@@ -153,7 +157,7 @@ add_action( 'init', 'my_function_setup' );
 You can retrieve your settings via the `get_options()` method, and assign this to a global variable.
 
 ```
-$my_settigns_obj = ZM_Settings();
+$my_settigns_obj = Quilt();
 
 global $my_settings;
 echo $my_settings_obj->get_options( 'some_text_field' );
