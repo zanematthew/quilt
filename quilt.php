@@ -1,7 +1,7 @@
 <?php
 
 if ( ! class_exists( 'Quilt' ) ) :
-Class Quilt Extends ZM_Form_Fields {
+Class Quilt Extends Lumber {
 
 
     /**
@@ -58,7 +58,7 @@ Class Quilt Extends ZM_Form_Fields {
         // @todo huh?
         if ( isset( $paths['dir_url_form_fields'] ) ){
             $this->dir_url_form_fields = trailingslashit( $paths['dir_url_form_fields'] );
-            add_filter( 'zm_form_fields_dir_url', array( &$this, 'zmFormFieldsDirUrl' ) );
+            add_filter( 'lumber_dir_url', array( &$this, 'zmFormFieldsDirUrl' ) );
         }
 
         $this->settings = $settings;
