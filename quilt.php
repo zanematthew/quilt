@@ -417,7 +417,7 @@ Class Quilt Extends Lumber {
      * @param $key The option key to get, $default, the default if any
      * @return Option from database
      */
-    public function getOption( $key='', $default=false ) {
+    public function getSaneOption( $key='', $default=false ) {
 
         $options = $this->getSaneOptions();
 
