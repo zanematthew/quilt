@@ -386,6 +386,43 @@ Class Quilt Extends Lumber {
 
 
     /**
+     * Get all values in the key of 'std' from the settings array
+     *
+     * @since 1.0.0
+     *
+     * @return $values (array) All values as an array.
+     */
+    public function getStdValues(){
+
+        foreach( $this->settings as $k => $v ){
+            foreach( $v['fields'] as $field ){
+                if ( isset( $field['options'] ) ){
+                    $defaults[ $field['id'] ] = $field['options'];
+                }
+            }
+        }
+
+        return $defaults;
+    }
+
+
+    /**
+     * Get a SINGLE value in the key of 'std' from the settings array
+     *
+     * @since 1.0.0
+     * @param $key (string) The key to retrieve the value for.
+     * @return $values (array) All values as an array.
+     */
+    public function getStdValue( $key=null ){
+
+        $values = $this->getStdValues();
+
+        return ( array_key_exists( $key, $values ) ) ? $values[ $key ] : false;
+
+    }
+
+
+    /**
      * Merge the default options with the options array
      * This allows us to use settings from the settings array, as apposed
      * to having the user visit the settings, press "save" and save the
