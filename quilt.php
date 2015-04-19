@@ -119,7 +119,7 @@ Class Quilt Extends Lumber {
             );
         }
 
-        $paths = apply_filters( $this->namespace . '_paths', $defaults );
+        $paths = apply_filters( 'quilt_' . $this->namespace . '_paths', $defaults );
 
         return $paths;
 
@@ -140,7 +140,7 @@ Class Quilt Extends Lumber {
      */
     public function settings(){
 
-        return apply_filters( $this->namespace . '_settings', $this->settings );
+        return apply_filters( 'quilt_' . $this->namespace . '_settings', $this->settings );
 
     }
 
@@ -224,7 +224,7 @@ Class Quilt Extends Lumber {
      */
     public function adminMenu(){
 
-        $params = apply_filters( $this->namespace . '_admin_menu', array(
+        $params = apply_filters( 'quilt_' . $this->namespace . '_admin_menu', array(
             'title' => $this->namespaceToPageTitle(),
             'menu_title' => $this->namespaceToMenuTitle(),
             'permission' => 'manage_options',
@@ -321,9 +321,9 @@ Class Quilt Extends Lumber {
             settings_errors( $this->namespace );
         }
 
-        $below_tabs = apply_filters( $this->namespace . '_below_tabs', null );
-        $below_title = apply_filters( $this->namespace . '_below_title', null );
-        $description = apply_filters( $this->namespace . '_footer', __( 'Thank you for using Quilt.', $this->namespace ) );
+        $below_tabs = apply_filters( 'quilt_' . $this->namespace . '_below_tabs', null );
+        $below_title = apply_filters( 'quilt_' . $this->namespace . '_below_title', null );
+        $description = apply_filters( 'quilt_' . $this->namespace . '_footer', __( 'Thank you for using Quilt.', $this->namespace ) );
 
         ?>
         <div class="wrap">
@@ -380,7 +380,7 @@ Class Quilt Extends Lumber {
             }
         }
 
-        return apply_filters( $this->namespace . '_all_default_options', $defaults );
+        return apply_filters( 'quilt_' . $this->namespace . '_all_default_options', $defaults );
 
     }
 
@@ -459,9 +459,9 @@ Class Quilt Extends Lumber {
         $options = $this->getSaneOptions();
 
         $value = ! empty( $options[ $key ] ) ? $options[ $key ] : $default;
-        $value = apply_filters( $this->namespace . '_get_option', $value, $key, $default );
+        $value = apply_filters( 'quilt_' . $this->namespace . '_get_option', $value, $key, $default );
 
-        return apply_filters( $this->namespace . '_get_setting_' . $key, $value, $key, $default );
+        return apply_filters( 'quilt_' . $this->namespace . '_get_setting_' . $key, $value, $key, $default );
 
     }
 
@@ -551,13 +551,13 @@ Class Quilt Extends Lumber {
 
                     // Sanitize by type
                     if ( ! empty( $input[ $key ] ) ){
-                        $input[ $key ] = apply_filters( $this->namespace . '_sanitize_' . $type, $input[ $key ] );
+                        $input[ $key ] = apply_filters( 'quilt_' . $this->namespace . '_sanitize_' . $type, $input[ $key ] );
                     }
                 }
 
                 // sanitize by key here via filter
                 if ( ! empty( $input[ $key ] ) ){
-                    $input[ $key ] = apply_filters( $this->namespace . '_sanitize_' . $key, $input[ $key ] );
+                    $input[ $key ] = apply_filters( 'quilt_' . $this->namespace . '_sanitize_' . $key, $input[ $key ] );
                 }
             }
         }
@@ -644,7 +644,7 @@ Class Quilt Extends Lumber {
     public function doLicense( $args ) {
 
         // Use this to pass in the license data
-        $args = apply_filters( $this->namespace . '_license_args', $args );
+        $args = apply_filters( 'quilt_' . $this->namespace . '_license_args', $args );
 
         $button_text = __('Activate', $this->namespace );
         $status_text = null;
@@ -679,7 +679,7 @@ Class Quilt Extends Lumber {
 
             <input type="button" name="<?php echo $this->namespace; ?>_license_activate_button" data-<?php echo $this->namespace; ?>_license_action="<?php echo $action; ?>" id="<?php echo $this->namespace; ?>_license_activate_button" class="button" value="<?php echo $button_text; ?>" />
             <?php echo $status_text; ?>
-            <?php do_action( $this->namespace . '_below_license' ); ?>
+            <?php do_action( 'quilt_' . $this->namespace . '_below_license' ); ?>
         <?php endif; ?>
         <?php
     }
@@ -697,12 +697,12 @@ Class Quilt Extends Lumber {
 
         // use this filter to change the page_id to load css/js if the settings is
         // in a submenu
-        // if ( $screen->id == apply_filters( $this->namespace . '_screen_id', 'settings_page_' . $this->namespace ) ){
+        // if ( $screen->id == apply_filters( 'quilt_' . $this->namespace . '_screen_id', 'settings_page_' . $this->namespace ) ){
         //     wp_enqueue_style( $this->namespace . 'admin-style', $this->dir_url . 'assets/stylesheets/admin.css', '', '1.0' );
         // }
 
 
-        $styles = apply_filters( $this->namespace . '_styles', array(
+        $styles = apply_filters( 'quilt_' . $this->namespace . '_styles', array(
             array(
                 'handle' => $this->app . '-admin-style',
                 'src' => $this->dir_url . 'assets/stylesheets/admin.css',
@@ -737,7 +737,7 @@ Class Quilt Extends Lumber {
             $tab = key( $this->settings() );
         }
 
-        return apply_filters( $this->namespace . '_default_tab', $tab );
+        return apply_filters( 'quilt_' . $this->namespace . '_default_tab', $tab );
     }
 
 
@@ -765,7 +765,7 @@ Class Quilt Extends Lumber {
 
         $title = ucwords( $this->sanitizeNamespace( $this->namespace ) );
 
-        return apply_filters( $this->namespace . '_page_title', $title, $this->namespace );
+        return apply_filters( 'quilt_' . $this->namespace . '_page_title', $title, $this->namespace );
 
     }
 
@@ -780,7 +780,7 @@ Class Quilt Extends Lumber {
 
         $title = ucwords( $this->sanitizeNamespace( $this->namespace ) );
 
-        return apply_filters( $this->namespace . '_menu_title', $title, $this->namespace );
+        return apply_filters( 'quilt_' . $this->namespace . '_menu_title', $title, $this->namespace );
 
     }
 }
