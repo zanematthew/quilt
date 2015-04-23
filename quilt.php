@@ -672,12 +672,14 @@ Class Quilt Extends Lumber {
         <?php
         /**
          * If we have a license we show the Activate/Deactivate along with the status
+         *
+         * NOTE you MUST use zm_license_* as this reflects the name found in "ZM_License" class!
          */
         if ( ! empty( $args['value'] ) ) : ?>
-            <input type="hidden" name="<?php echo $this->namespace; ?>[license_action]" id="<?php echo $this->namespace; ?>_license_action" value="" />
-            <input type="hidden" name="<?php echo $this->namespace; ?>[previous_license]" id="<?php echo $this->namespace; ?>_previous_license" value="<?php echo $args['value']; ?>" />
+            <input type="hidden" name="<?php echo $this->namespace; ?>[license_action]" id="zm_license_action" value="" />
+            <input type="hidden" name="<?php echo $this->namespace; ?>[previous_license]" id="zm_previous_license" value="<?php echo $args['value']; ?>" />
 
-            <input type="button" name="<?php echo $this->namespace; ?>_license_activate_button" data-<?php echo $this->namespace; ?>_license_action="<?php echo $action; ?>" id="<?php echo $this->namespace; ?>_license_activate_button" class="button" value="<?php echo $button_text; ?>" />
+            <input type="button" name="<?php echo $this->namespace; ?>_license_activate_button" data-zm_license_action="<?php echo $action; ?>" id="zm_license_activate_button" class="button" value="<?php echo $button_text; ?>" />
             <?php echo $status_text; ?>
             <?php do_action( 'quilt_' . $this->namespace . '_below_license' ); ?>
         <?php endif; ?>
