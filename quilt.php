@@ -772,9 +772,7 @@ Class Quilt Extends Lumber {
      */
     public function namespaceToPageTitle(){
 
-        $title = ucwords( $this->sanitizeNamespace( $this->namespace ) );
-
-        return apply_filters( $this->filter_prefix . '_page_title', $title, $this->namespace );
+        return apply_filters( $this->filter_prefix . '_page_title', $this->namespaceToString(), $this->namespace );
 
     }
 
@@ -787,9 +785,20 @@ Class Quilt Extends Lumber {
      */
     public function namespaceToMenuTitle(){
 
-        $title = ucwords( $this->sanitizeNamespace( $this->namespace ) );
+        return apply_filters( $this->filter_prefix . '_menu_title', $this->namespaceToString(), $this->namespace );
 
-        return apply_filters( $this->filter_prefix . '_menu_title', $title, $this->namespace );
+    }
+
+
+    /**
+     * Converts a sanitized namespace to be used as a string
+     *
+     * @param $namespace
+     * @return $string A string to be used a the menu title
+     */
+    public function namespaceToString(){
+
+        return ucwords( str_replace( array('-','_'), ' ', $this->sanitizeNamespace( $this->namespace ) ) );
 
     }
 }
