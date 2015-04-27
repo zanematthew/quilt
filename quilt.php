@@ -441,6 +441,7 @@ Class Quilt Extends Lumber {
      * defaults to the db. More info can be found on
      * [using sane defaults in themes](https://make.wordpress.org/themes/2014/07/09/using-sane-defaults-in-themes/).
      *
+     * @since 1.0.0
      * @return Associative array containing options from DB and defaults.
      */
     public function getSaneOptions(){
@@ -754,6 +755,7 @@ Class Quilt Extends Lumber {
     /**
      * Determine which tab to use to save the settings/options
      *
+     * @since 1.0.0
      * @param
      * @return $tab (string) The default tab to use for saving settings/options
      */
@@ -778,6 +780,7 @@ Class Quilt Extends Lumber {
      * Should return a string that is safe to be used in function names, as a variable, etc.
      * free of illegal characters.
      *
+     * @since 1.0.0
      * @param $namespace (string)   The namespace to sanitize
      * @return $namespace (string)  The namespace free of illegal characters.
      */
@@ -791,6 +794,7 @@ Class Quilt Extends Lumber {
     /**
      * Converts a sanitized namespace to be used a page title.
      *
+     * @since 1.0.0
      * @param
      * @return $string A string to be used a the page title
      */
@@ -804,6 +808,7 @@ Class Quilt Extends Lumber {
     /**
      * Converts a sanitized namespace to be used a menu title.
      *
+     * @since 1.0.0
      * @param
      * @return $string A string to be used a the menu title
      */
@@ -817,6 +822,7 @@ Class Quilt Extends Lumber {
     /**
      * Converts a sanitized namespace to be used as a string
      *
+     * @since 1.0.0
      * @param $namespace
      * @return $string A string to be used a the menu title
      */
@@ -832,6 +838,7 @@ Class Quilt Extends Lumber {
      * Sets the values in the *_options table to what the "sane options" are,
      * i.e., defaults.
      *
+     * @since 1.0.0
      * @return bool
      */
     public function restoreDefaults(){
@@ -845,6 +852,7 @@ Class Quilt Extends Lumber {
      * Processes the ajax request, checking the needed security values
      * then sends it to restoreDefaults
      *
+     * @since 1.0.0
      * @return mixed
      */
     public function restoreDefaultsAjax(){
