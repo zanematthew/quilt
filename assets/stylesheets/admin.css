@@ -46,3 +46,8 @@
     line-height: 24px;
     padding-left: 10px;
     }
+
+.wp-core-ui .button-restore-default {
+    margin-left: 20px;
+    float: right;
+    }

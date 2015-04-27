@@ -72,6 +72,7 @@ Class Quilt Extends Lumber {
         add_action( 'admin_init', array( &$this, 'registerSettings' ) );
         add_action( 'admin_enqueue_scripts', array( &$this, 'adminEnqueueScripts') );
         add_action( 'admin_notices', array( &$this, 'adminNoticesAction' ) );
+        add_action( 'wp_ajax_restoreDefaultsAjax', array( &$this, 'restoreDefaultsAjax' ) );
     }
 
 
@@ -346,7 +347,11 @@ Class Quilt Extends Lumber {
                 </table>
                 <hr >
                 <p class="description"><?php echo $description; ?></p>
-                <?php submit_button( __( 'Save Changes', $this->namespace ), 'primary', 'submit_form', true ) ?>
+                <?php submit_button( __( 'Save Changes', $this->namespace ), 'primary', 'submit_form', false ) ?>
+
+                <button class="button button-secondary" type="reset" value="<?php echo _e( 'Reset Values', $this->namespace ); ?>"><?php echo _e( 'Reset Values', $this->namespace ); ?></button>
+
+                <input type="button" class="button button-secondary button-restore-default" value="<?php _e( 'Restore Defaults', $this->namespace ); ?>" id="<?php echo $this->app; ?>_restore_default_button" name="<?php echo $this->app; ?>_restore_default_button" data-<?php echo $this->app; ?>_restore_default_nonce="<?php echo wp_create_nonce( 'restoreDefaultsAjax' ); ?>" />
             </form>
         </div>
     <?php }
@@ -702,6 +707,7 @@ Class Quilt Extends Lumber {
      * @return void
      */
     public function adminEnqueueScripts(){
+
         $screen = get_current_screen();
 
         // use this filter to change the page_id to load css/js if the settings is
@@ -724,6 +730,24 @@ Class Quilt Extends Lumber {
         foreach( $styles as $style ){
             wp_enqueue_style( $style['handle'], $style['src'], $style['deps'], $style['ver'], $style['media'] );
         }
+
+        $scripts = apply_filters( $this->filter_prefix . '_scripts', array(
+            array(
+            'handle' => $this->app . '-admin-script',
+            'src' => $this->dir_url . 'assets/javascripts/admin.js',
+            'deps' => array('jquery'),
+            'ver' => $this->version,
+            'in_footer' => true,
+            )
+        ), $this->namespace );
+
+        foreach( $scripts as $script ){
+            wp_enqueue_script( $script['handle'], $script['src'], $script['deps'], $script['ver'], $script['in_footer'] );
+        }
+
+        wp_localize_script( $this->app . '-admin-script', '_' . $this->app, array(
+            'restore_default_message' => __( "This will delete your current settings and restore the defaults.", $this->namespace )
+        ) );
     }
 
 
@@ -801,5 +825,35 @@ Class Quilt Extends Lumber {
         return ucwords( str_replace( array('-','_'), ' ', $this->sanitizeNamespace( $this->namespace ) ) );
 
     }
+
+
+
+    /**
+     * Sets the values in the *_options table to what the "sane options" are,
+     * i.e., defaults.
+     *
+     * @return bool
+     */
+    public function restoreDefaults(){
+
+        return update_option( $this->namespace, $this->getSaneOptions() );
+
+    }
+
+
+    /**
+     * Processes the ajax request, checking the needed security values
+     * then sends it to restoreDefaults
+     *
+     * @return mixed
+     */
+    public function restoreDefaultsAjax(){
+
+        check_admin_referer( 'restoreDefaultsAjax' );
+
+        return wp_send_json( array( 'message' => 'Restoring defaults', 'status' => $this->restoreDefaults() ) );
+
+    }
+
 }
 endif;
