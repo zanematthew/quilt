@@ -73,6 +73,7 @@ Class Quilt Extends Lumber {
         add_action( 'admin_enqueue_scripts', array( &$this, 'adminEnqueueScripts') );
         add_action( 'admin_notices', array( &$this, 'adminNoticesAction' ) );
         add_action( 'wp_ajax_restoreDefaultsAjax', array( &$this, 'restoreDefaultsAjax' ) );
+
     }
 
 
@@ -833,17 +834,15 @@ Class Quilt Extends Lumber {
     }
 
 
-
     /**
-     * Sets the values in the *_options table to what the "sane options" are,
-     * i.e., defaults.
+     * Sets the defaults by deleting the option and allowing the sane options to be used.
      *
      * @since 1.0.0
      * @return bool
      */
     public function restoreDefaults(){
 
-        return update_option( $this->namespace, $this->getSaneOptions() );
+        return delete_option( $this->namespace );
 
     }
 
