@@ -57,12 +57,7 @@ Class Quilt Extends Lumber {
 
         $this->action_prefix = $this->app . '_' . $this->namespace;
         $this->filter_prefix = $this->app . '_' . $this->namespace;
-
         $this->setting_type = $type;
-
-        $paths = $this->getPaths();
-        $this->dir_url = $paths['dir_url'];
-        $this->dir_path = $paths['dir_path'];
 
         // @todo huh?
         if ( isset( $paths['dir_url_form_fields'] ) ){
@@ -71,6 +66,7 @@ Class Quilt Extends Lumber {
         }
 
         $this->settings = $settings;
+        $this->app_url = plugin_dir_url( __FILE__ );
 
         add_action( 'admin_menu', array( &$this, 'adminMenu' ) );
         add_action( 'admin_init', array( &$this, 'registerSettings' ) );
@@ -107,49 +103,6 @@ Class Quilt Extends Lumber {
 
     }
 
-
-
-    /**
-     * Sets the absolute and URL paths for either using this as a plugin setting or theme
-     * settings
-     *
-     * @since 1.0.0
-     * @return  $paths  (array)     An array of containing absolute and URLs paths
-     */
-    public function getPaths(){
-
-        $type = isset( $_GET['page'] ) ? end( explode( '_', $_GET['page'] ) ) : null;
-
-        if ( empty( $type ) )
-            return;
-
-        if ( $type == 'plugin' ){
-
-            $defaults = array(
-                'dir_path' => plugin_dir_path( __FILE__ ),
-                'dir_url' => plugin_dir_url( __FILE__ )
-            );
-
-        }
-
-        elseif ( $type == 'theme' ) {
-
-            $app_base_dir =  'lib/' . $this->app;
-
-            $defaults = array(
-                'dir_path' => trailingslashit( get_stylesheet_directory() . '/' . $app_base_dir ),
-                'dir_url' => trailingslashit( get_stylesheet_directory_uri() . '/' . $app_base_dir )
-            );
-
-        }
-
-        else {
-            wp_die('Invalid Type');
-        }
-
-        return $defaults;
-
-    }
 
 
     // @todo huh?
@@ -731,36 +684,29 @@ Class Quilt Extends Lumber {
 
         $screen = get_current_screen();
 
-        // use this filter to change the page_id to load css/js if the settings is
-        // in a submenu
-        // if ( $screen->id == apply_filters( $this->filter_prefix . '_screen_id', 'settings_page_' . $this->namespace ) ){
-        //     wp_enqueue_style( $this->namespace . 'admin-style', $this->dir_url . 'assets/stylesheets/admin.css', '', '1.0' );
-        // }
-
-
-        $styles = apply_filters( $this->filter_prefix . '_styles', array(
+        $styles = array(
             array(
                 'handle' => $this->app . '-admin-style',
-                'src' => $this->dir_url . 'assets/stylesheets/admin.css',
+                'src' => apply_filters( $this->filter_prefix . '_admin_style', $this->app_url . 'assets/stylesheets/admin.css' ),
                 'deps' => '',
                 'ver' => $this->version,
                 'media' => ''
             )
-        ), $this->namespace );
+        );
 
         foreach( $styles as $style ){
             wp_enqueue_style( $style['handle'], $style['src'], $style['deps'], $style['ver'], $style['media'] );
         }
 
-        $scripts = apply_filters( $this->filter_prefix . '_scripts', array(
+        $scripts = array(
             array(
             'handle' => $this->app . '-admin-script',
-            'src' => $this->dir_url . 'assets/javascripts/admin.js',
+            'src' => apply_filters( $this->filter_prefix . '_admin_script', $this->app_url . 'assets/javascripts/admin.js' ),
             'deps' => array('jquery'),
             'ver' => $this->version,
             'in_footer' => true,
             )
-        ), $this->namespace );
+        );
 
         foreach( $scripts as $script ){
             wp_enqueue_script( $script['handle'], $script['src'], $script['deps'], $script['ver'], $script['in_footer'] );
