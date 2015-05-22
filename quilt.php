@@ -120,9 +120,11 @@ Class Quilt Extends Lumber {
                 'dir_url' => plugin_dir_url( __FILE__ )
             );
         } else {
+            $app_base_dir =  str_replace( trailingslashit( get_stylesheet_directory() ), null, dirname( __FILE__ ) );
+
             $defaults = array(
-                'dir_path' => trailingslashit( get_stylesheet_directory() ),
-                'dir_url' => trailingslashit( get_stylesheet_directory_uri() )
+                'dir_path' => trailingslashit( get_stylesheet_directory() . '/' . $app_base_dir ),
+                'dir_url' => trailingslashit( get_stylesheet_directory_uri() . '/' . $app_base_dir )
             );
         }
 
