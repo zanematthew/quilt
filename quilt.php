@@ -118,23 +118,36 @@ Class Quilt Extends Lumber {
      */
     public function getPaths(){
 
-        if ( $this->setting_type == 'plugin' ){
+        $type = isset( $_GET['page'] ) ? end( explode( '_', $_GET['page'] ) ) : null;
+
+        if ( empty( $type ) )
+            return;
+
+        if ( $type == 'plugin' ){
+
             $defaults = array(
                 'dir_path' => plugin_dir_path( __FILE__ ),
                 'dir_url' => plugin_dir_url( __FILE__ )
             );
-        } else {
-            $app_base_dir =  str_replace( trailingslashit( get_stylesheet_directory() ), null, dirname( __FILE__ ) );
+
+        }
+
+        elseif ( $type == 'theme' ) {
+
+            $app_base_dir =  'lib/' . $this->app;
 
             $defaults = array(
                 'dir_path' => trailingslashit( get_stylesheet_directory() . '/' . $app_base_dir ),
                 'dir_url' => trailingslashit( get_stylesheet_directory_uri() . '/' . $app_base_dir )
             );
+
         }
 
-        $paths = apply_filters( $this->filter_prefix . '_paths', $defaults );
+        else {
+            wp_die('Invalid Type');
+        }
 
-        return $paths;
+        return $defaults;
 
     }
 
@@ -254,7 +267,7 @@ Class Quilt Extends Lumber {
                 $params['title'],
                 $params['menu_title'],
                 $params['permission'],
-                $params['namespace'] . '_options',
+                $params['namespace'] . '_options_type_theme',
                 $params['template']
             );
 
@@ -265,7 +278,7 @@ Class Quilt Extends Lumber {
                 $params['title'],
                 $params['menu_title'],
                 $params['permission'],
-                $params['namespace'] . '_settings',
+                $params['namespace'] . '_settings_type_plugin',
                 $params['template']
             );
 
