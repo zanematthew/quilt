@@ -14,6 +14,7 @@ jQuery( document ).ready(function( $ ){
                 type: 'POST',
                 data: {
                     action: 'restoreDefaultsAjax',
+                    namespace: $this.parent('form').data('namespace'),
                     _wpnonce: $this.data('quilt_restore_default_nonce')
                 },
                 success: function( msg ){

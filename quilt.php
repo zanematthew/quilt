@@ -49,7 +49,11 @@ Class Quilt Extends Lumber {
      */
     public function __construct( $namespace=null, $settings=null, $type=null ){
 
-        $this->namespace = $this->sanitizeNamespace( $namespace );
+        if ( isset( $_POST['namespace'] ) ){
+            $this->namespace = $this->sanitizeNamespace( $_POST['namespace'] );
+        } else {
+            $this->namespace = $this->sanitizeNamespace( $namespace );
+        }
 
         $this->action_prefix = $this->app . '_' . $this->namespace;
         $this->filter_prefix = $this->app . '_' . $this->namespace;
@@ -341,7 +345,7 @@ Class Quilt Extends Lumber {
             <div id="icon-options-general" class="icon32"><br></div>
             <h2><?php echo $this->namespaceToPageTitle(); ?></h2>
             <?php echo $below_title; ?>
-            <form action="options.php" method="POST" id="<?php echo $this->namespace; ?>_settings_form" class="<?php echo $this->namespace; ?> <?php echo $current_tab; ?>-settings">
+            <form action="options.php" method="POST" id="<?php echo $this->namespace; ?>_settings_form" class="<?php echo $this->namespace; ?> <?php echo $current_tab; ?>-settings" data-namespace="<?php echo $this->namespace; ?>">
                 <?php echo $tabs; ?>
                 <?php echo $below_tabs; ?>
                 <table class="form-table">
