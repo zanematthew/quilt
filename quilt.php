@@ -175,7 +175,7 @@ Class Quilt Extends Lumber {
                 // These are extra params passed into our function/method
                 $params = array_merge( $this->getAttributes( $field ), array(
                     'echo'        => true,
-                    'id'          => isset( $field['id'] ) ? $field['id'] : null,
+                    'id'          => $field_id,
                     'value'       => $value,
                     'options'     => isset( $field['options'] ) ? $field['options'] : '',
                     'name'        => $this->namespace . '[' . $field_id . ']',
@@ -385,8 +385,9 @@ Class Quilt Extends Lumber {
 
         foreach( $this->settings as $k => $v ){
             foreach( $v['fields'] as $field ){
+                $field_id = $this->getFieldId( $field );
                 if ( isset( $field['options'] ) ){
-                    $defaults[ $field['id'] ] = $field['options'];
+                    $defaults[ $field_id ] = $field['options'];
                 }
             }
         }
@@ -478,78 +479,79 @@ Class Quilt Extends Lumber {
 
         foreach( $settings[ $tab ]['fields'] as $field ){
 
-            if ( ! empty( $field['id'] ) && ! empty( $input[ $field['id'] ] ) ){
 
-                $key = $field['id'];
-                $value = $input[ $field['id'] ];
-                $type = $field['type'];
+            $field_id = $this->getFeildId( $field );
 
-                if ( array_key_exists( $key, $input ) ){
+            $key = $field_id;
+            $value = $input[ $field_id ];
+            $type = $field['type'];
 
-                    switch( $type ) {
-                        case 'select' :
-                        case 'us_state' :
-                        case 'textarea' :
-                        case 'textarea_email_template' :
-                        case 'checkbox' :
-                        case 'radio' :
-                            $input[ $key ] = $this->sanitizeDefault( $value );
-                            break;
+            if ( array_key_exists( $key, $input ) ){
 
-                        case 'checkboxes' :
-                            $tmp = array();
-                            foreach( $field['options'] as $k => $v ){
-                                if ( is_array( $v ) ){
-                                    if ( in_array($v['id'], $value) ){
-                                        if ( ! empty( $v['title'] ) ){
-                                            $tmp[ $v['id'] ] = array(
-                                                'id' => $v['id'],
-                                                'title' => $v['title']
-                                            );
-                                        }
+                switch( $type ) {
+                    case 'select' :
+                    case 'us_state' :
+                    case 'textarea' :
+                    case 'textarea_email_template' :
+                    case 'checkbox' :
+                    case 'radio' :
+                        $input[ $key ] = $this->sanitizeDefault( $value );
+                        break;
+
+                    case 'checkboxes' :
+                        $tmp = array();
+                        foreach( $field['options'] as $k => $v ){
+                            if ( is_array( $v ) ){
+                                if ( in_array($v['id'], $value) ){
+                                    if ( ! empty( $v['title'] ) ){
+                                        $tmp[ $v['id'] ] = array(
+                                            'id' => $v['id'],
+                                            'title' => $v['title']
+                                        );
                                     }
-                                } elseif ( in_array( $k, $value ) ){
-                                    $input[ $key ] = $value;
                                 }
+                            } elseif ( in_array( $k, $value ) ){
+                                $input[ $key ] = $value;
                             }
-                            if ( ! empty( $tmp ) ){
-                                $input[ $key ] = $tmp;
-                            }
-                            break;
+                        }
+                        if ( ! empty( $tmp ) ){
+                            $input[ $key ] = $tmp;
+                        }
+                        break;
 
-                        case 'multiselect' :
-                            $input[ $key ] = $this->sanitizeMultiselect( $value );
-                            break;
+                    case 'multiselect' :
+                        $input[ $key ] = $this->sanitizeMultiselect( $value );
+                        break;
 
-                        case 'emails' :
-                            $input[ $key ] = $this->sanitizeEmails( $value );
-                            break;
+                    case 'emails' :
+                        $input[ $key ] = $this->sanitizeEmails( $value );
+                        break;
 
-                        // Yes, ips
-                        case 'ips' :
-                            $input[ $key ] = $this->sanitizeIps( $value );
-                            break;
+                    // Yes, ips
+                    case 'ips' :
+                        $input[ $key ] = $this->sanitizeIps( $value );
+                        break;
 
-                        case 'touchtime' :
-                            $input[ $key ] = $this->sanitizeTouchtime( $value );
-                            break;
+                    case 'touchtime' :
+                        $input[ $key ] = $this->sanitizeTouchtime( $value );
+                        break;
 
-                        default:
-                            $input[ $key ] = $this->sanitizeDefault( $value );
-                            break;
-                    }
-
-                    // Sanitize by type
-                    if ( ! empty( $input[ $key ] ) ){
-                        $input[ $key ] = apply_filters( $this->filter_prefix . '_sanitize_' . $type, $input[ $key ] );
-                    }
+                    default:
+                        $input[ $key ] = $this->sanitizeDefault( $value );
+                        break;
                 }
 
-                // sanitize by key here via filter
+                // Sanitize by type
                 if ( ! empty( $input[ $key ] ) ){
-                    $input[ $key ] = apply_filters( $this->filter_prefix . '_sanitize_' . $key, $input[ $key ] );
+                    $input[ $key ] = apply_filters( $this->filter_prefix . '_sanitize_' . $type, $input[ $key ] );
                 }
             }
+
+            // sanitize by key here via filter
+            if ( ! empty( $input[ $key ] ) ){
+                $input[ $key ] = apply_filters( $this->filter_prefix . '_sanitize_' . $key, $input[ $key ] );
+            }
+
         }
 
         // Loop through the whitelist and unset any that are empty for the tab being saved
@@ -557,7 +559,7 @@ Class Quilt Extends Lumber {
 
         if ( ! empty( $settings[ $tab ] ) ) {
             foreach ( $settings[ $tab ]['fields'] as $field ) {
-                $key = $field['id'];
+                $key = $this->getFieldId( $field );
 
                 if ( empty( $input[ $key ] ) ) {
                     unset( $options[ $key ] );
@@ -828,27 +830,6 @@ Class Quilt Extends Lumber {
         check_admin_referer( 'restoreDefaultsAjax' );
 
         return wp_send_json( array( 'message' => 'Restoring defaults', 'status' => $this->restoreDefaults() ) );
-
-    }
-
-
-
-    /**
-     * Generates a dynamic field id.
-     *
-     * @since   1.0.1
-     * @todo    make duplicate IDs dynamic by prefixing _$i
-     * @return  The dynamic field id
-     */
-    public function getFieldId( $field=null ){
-
-        if ( empty( $field['id'] ) ){
-            $field_id = trim( strtolower( str_replace( array(' ', '-'), '_', $field['title'] ) ) );
-        } else {
-            $field_id = $field['id'];
-        }
-
-        return $field_id;
 
     }
 
