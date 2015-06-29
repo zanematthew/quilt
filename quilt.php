@@ -170,20 +170,23 @@ Class Quilt Extends Lumber {
                     $callback = array( $this, 'missingCallback' );
                 }
 
+                $field_id = $this->getFieldId( $field );
+
                 // These are extra params passed into our function/method
                 $params = array_merge( $this->getAttributes( $field ), array(
                     'echo'        => true,
                     'id'          => isset( $field['id'] ) ? $field['id'] : null,
                     'value'       => $value,
                     'options'     => isset( $field['options'] ) ? $field['options'] : '',
-                    'name'        => $this->namespace . '[' . $field['id'] . ']',
+                    'name'        => $this->namespace . '[' . $field_id . ']',
                     'title'       => '',
                     'namespace'   => $this->namespace
                 ) );
 
                 $title = isset( $field['title'] ) ? $field['title'] : '';
+
                 add_settings_field(
-                    $this->namespace.'[' . $field['id'] . ']', // ID
+                    $this->namespace.'[' . $field_id . ']', // ID
                     $title,                                    // Title
                     $callback,                                 // Callback
                     $this->namespace . '_' . $id,              // Page
@@ -359,8 +362,9 @@ Class Quilt Extends Lumber {
 
         foreach( $this->settings as $k => $v ){
             foreach( $v['fields'] as $field ){
+                $field_id = $this->getFieldId( $field );
                 if ( isset( $field['std'] ) ){
-                    $defaults[ $field['id'] ] = $field['std'];
+                    $defaults[ $field_id ] = $field['std'];
                 }
             }
         }
@@ -824,6 +828,27 @@ Class Quilt Extends Lumber {
         check_admin_referer( 'restoreDefaultsAjax' );
 
         return wp_send_json( array( 'message' => 'Restoring defaults', 'status' => $this->restoreDefaults() ) );
+
+    }
+
+
+
+    /**
+     * Generates a dynamic field id.
+     *
+     * @since   1.0.1
+     * @todo    make duplicate IDs dynamic by prefixing _$i
+     * @return  The dynamic field id
+     */
+    public function getFieldId( $field=null ){
+
+        if ( empty( $field['id'] ) ){
+            $field_id = trim( strtolower( str_replace( array(' ', '-'), '_', $field['title'] ) ) );
+        } else {
+            $field_id = $field['id'];
+        }
+
+        return $field_id;
 
     }
 
