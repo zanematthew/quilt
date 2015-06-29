@@ -149,10 +149,12 @@ Class Quilt Extends Lumber {
 
             foreach ( $section['fields'] as $field ) {
 
+                $field_id = $this->getFieldId( $field );
+
                 if ( isset( $field['value'] ) ) {
-                    $value = $options[ $field['id'] ];
-                } else if ( isset( $field['id'] ) && isset( $options[ $field['id'] ] ) ){
-                    $value = $options[ $field['id'] ];
+                    $value = $options[ $field_id ];
+                } else if ( isset( $field_id ) && isset( $options[ $field_id ] ) ){
+                    $value = $options[ $field_id ];
                 } elseif ( isset( $field['std'] ) ) {
                     $value = $field['std'];
                 } else {
@@ -170,7 +172,6 @@ Class Quilt Extends Lumber {
                     $callback = array( $this, 'missingCallback' );
                 }
 
-                $field_id = $this->getFieldId( $field );
 
                 // These are extra params passed into our function/method
                 $params = array_merge( $this->getAttributes( $field ), array(
@@ -480,7 +481,7 @@ Class Quilt Extends Lumber {
         foreach( $settings[ $tab ]['fields'] as $field ){
 
 
-            $field_id = $this->getFeildId( $field );
+            $field_id = $this->getFieldId( $field );
 
             $key = $field_id;
             $value = $input[ $field_id ];
