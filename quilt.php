@@ -324,12 +324,16 @@ Class Quilt Extends Lumber {
                     <?php do_settings_fields( $this->namespace . '_' . $current_tab, $this->namespace . '_' . $current_tab ); ?>
                 </table>
                 <hr >
-                <p class="description"><?php echo $description; ?></p>
-                <?php submit_button( __( 'Save Changes', $this->namespace ), 'primary', 'submit_form', false ) ?>
+                <div class="footer">
+                    <p class="description"><?php echo $description; ?></p>
+                    <?php submit_button( __( 'Save Changes', $this->namespace ), 'primary', 'submit_form', false ) ?>
 
-                <button class="button button-secondary" type="reset" value="<?php echo _e( 'Reset Values', $this->namespace ); ?>"><?php echo _e( 'Reset Values', $this->namespace ); ?></button>
+                    <button class="button button-secondary" type="reset" value="<?php echo _e( 'Reset Values', $this->namespace ); ?>"><?php echo _e( 'Reset Values', $this->namespace ); ?></button>
 
-                <input type="button" class="button button-secondary button-restore-default" value="<?php _e( 'Restore Defaults', $this->namespace ); ?>" id="<?php echo $this->app; ?>_restore_default_button" name="<?php echo $this->app; ?>_restore_default_button" data-<?php echo $this->app; ?>_restore_default_nonce="<?php echo wp_create_nonce( 'restoreDefaultsAjax' ); ?>" />
+                    <?php do_action( $this->action_prefix . '_after_left_buttons' ); ?>
+
+                    <input type="button" class="button button-secondary button-restore-default" value="<?php _e( 'Restore Defaults', $this->namespace ); ?>" id="<?php echo $this->app; ?>_restore_default_button" name="<?php echo $this->app; ?>_restore_default_button" data-<?php echo $this->app; ?>_restore_default_nonce="<?php echo wp_create_nonce( 'restoreDefaultsAjax' ); ?>" />
+                </div>
             </form>
         </div>
     <?php }
