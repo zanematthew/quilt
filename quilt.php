@@ -172,11 +172,12 @@ Class Quilt Extends Lumber {
                     $callback = array( $this, 'missingCallback' );
                 }
 
+                $field['namespace'] = $this->namespace;
 
                 // These are extra params passed into our function/method
                 $params = array_merge( $this->getAttributes( $field ), array(
                     'echo'        => true,
-                    'id'          => $field_id,
+                    'id'          => $this->getFieldHtmlId( $field ),
                     'value'       => $value,
                     'options'     => isset( $field['options'] ) ? $field['options'] : '',
                     'name'        => $this->namespace . '[' . $field_id . ']',
@@ -187,7 +188,7 @@ Class Quilt Extends Lumber {
                 $title = isset( $field['title'] ) ? $field['title'] : '';
 
                 add_settings_field(
-                    $this->namespace.'[' . $field_id . ']', // ID
+                    $this->namespace . '[' . $field_id . ']', // ID
                     $title,                                    // Title
                     $callback,                                 // Callback
                     $this->namespace . '_' . $id,              // Page
