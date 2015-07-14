@@ -366,7 +366,7 @@ Class Quilt Extends Lumber {
 
         $defaults = array();
 
-        foreach( $this->settings as $k => $v ){
+        foreach( $this->settings() as $k => $v ){
             foreach( $v['fields'] as $field ){
                 $field_id = $this->getFieldId( $field );
                 if ( isset( $field['std'] ) ){
@@ -489,7 +489,7 @@ Class Quilt Extends Lumber {
             $field_id = $this->getFieldId( $field );
 
             $key = $field_id;
-            $value = $input[ $field_id ];
+            $value = isset( $input[ $field_id ] ) ? $input[ $field_id ] : null;
             $type = $field['type'];
 
             if ( array_key_exists( $key, $input ) ){
