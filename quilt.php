@@ -332,7 +332,7 @@ Class Quilt Extends Lumber {
 
                     <?php do_action( $this->action_prefix . '_after_left_buttons' ); ?>
 
-                    <input type="button" class="button button-secondary button-restore-default" value="<?php _e( 'Restore Defaults', $this->namespace ); ?>" id="<?php echo $this->app; ?>_restore_default_button" name="<?php echo $this->app; ?>_restore_default_button" data-<?php echo $this->app; ?>_restore_default_nonce="<?php echo wp_create_nonce( 'restoreDefaultsAjax' ); ?>" />
+                    <input type="button" class="button button-secondary button-restore-default" value="<?php _e( 'Restore ALL Default Values', $this->namespace ); ?>" id="<?php echo $this->app; ?>_restore_default_button" name="<?php echo $this->app; ?>_restore_default_button" data-<?php echo $this->app; ?>_restore_default_nonce="<?php echo wp_create_nonce( 'restoreDefaultsAjax' ); ?>" />
                 </div>
             </form>
         </div>
