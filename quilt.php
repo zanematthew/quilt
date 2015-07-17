@@ -332,7 +332,7 @@ Class Quilt Extends Lumber {
 
                     <?php do_action( $this->action_prefix . '_after_left_buttons' ); ?>
 
-                    <input type="button" class="button button-secondary button-restore-default" value="<?php _e( 'Restore ALL Default Values', $this->namespace ); ?>" id="<?php echo $this->app; ?>_restore_default_button" name="<?php echo $this->app; ?>_restore_default_button" data-<?php echo $this->app; ?>_restore_default_nonce="<?php echo wp_create_nonce( 'restoreDefaultsAjax' ); ?>" />
+                    <input type="button" class="button button-secondary button-restore-default" value="<?php _e( 'Restore ALL Default Values', $this->namespace ); ?>" id="<?php echo $this->app; ?>_restore_default_button" name="<?php echo $this->app; ?>_restore_default_button" data-<?php echo $this->app; ?>_restore_default_nonce="<?php echo wp_create_nonce( 'restoreDefaultsAjax' ); ?>" data-namespace="<?php echo $this->namespace; ?>" />
                 </div>
             </form>
         </div>
@@ -817,9 +817,9 @@ Class Quilt Extends Lumber {
      * @since 1.0.0
      * @return bool
      */
-    public function restoreDefaults(){
+    public function restoreDefaults( $namespace=null ){
 
-        return delete_option( $this->namespace );
+        return delete_option( $namespace );
 
     }
 
@@ -835,7 +835,7 @@ Class Quilt Extends Lumber {
 
         check_admin_referer( 'restoreDefaultsAjax' );
 
-        return wp_send_json( array( 'message' => 'Restoring defaults', 'status' => $this->restoreDefaults() ) );
+        return wp_send_json( array( 'message' => 'Restoring defaults', 'status' => $this->restoreDefaults( esc_attr( $namespace ) ) ) );
 
     }
 
