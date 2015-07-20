@@ -835,7 +835,7 @@ Class Quilt Extends Lumber {
 
         check_admin_referer( 'restoreDefaultsAjax' );
 
-        return wp_send_json( array( 'message' => 'Restoring defaults', 'status' => $this->restoreDefaults( esc_attr( $namespace ) ) ) );
+        return wp_send_json( array( 'message' => 'Restoring defaults', 'status' => $this->restoreDefaults( esc_attr( $_POST['namespace'] ) ) ) );
 
     }
 
