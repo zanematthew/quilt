@@ -225,7 +225,7 @@ Class Quilt Extends Lumber {
                 $params['title'],
                 $params['menu_title'],
                 $params['permission'],
-                $params['namespace'] . '_options_type_theme',
+                $params['namespace'],
                 $params['template']
             );
 
@@ -236,7 +236,7 @@ Class Quilt Extends Lumber {
                 $params['title'],
                 $params['menu_title'],
                 $params['permission'],
-                $params['namespace'] . '_settings_type_plugin',
+                $params['namespace'],
                 $params['template']
             );
 
