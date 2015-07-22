@@ -5,17 +5,17 @@ $settings = array(
 
     // General
     'usage' => array(
-        'title' => __( 'Usage', $namespace ),
+        'title' => 'Usage',
         'fields' => array(
             array(
                 'id' => 'usage_header',
-                'title' => __('Usage', $namespace ),
+                'title' => 'Usage',
                 'type' => 'header'
             ),
             array(
                 'id' => 'usage_description',
-                'title' => __( 'Description', $namespace ),
-                'desc' => __( 'Thank you for using ZM Settings API. Each tab shows in detail how to use this API. All of the functionality this API provides is designed to be filtered using; hooks and filters. Click through each tab to see the default field types, and how to sanitize settings.', $namespace ),
+                'title' => 'Description',
+                'desc' => 'Thank you for using ZM Settings API. Each tab shows in detail how to use this API. All of the functionality this API provides is designed to be filtered using; hooks and filters. Click through each tab to see the default field types, and how to sanitize settings.',
                 'type' => 'desc'
             ),
             array(
@@ -65,17 +65,17 @@ $settings = array(
 
     // Notifications
     'default_field_types' => array(
-        'title' => __( 'Default Fields Types', $namespace ),
+        'title' => 'Default Fields Types',
         'fields' => array(
             array(
                 'id' => 'my_checkbox_id',
-                'title' => __( 'Checkbox', $namespace ),
+                'title' => 'Checkbox',
                 'type' => 'checkbox',
                 'desc' => 'This is my description.'
             ),
             array(
                 'id' => 'my_checkboxes_id',
-                'title' => __( 'Checkboxes', $namespace ),
+                'title' => 'Checkboxes',
                 'type' => 'checkboxes',
                 'options' => array(
                     'foo' => 'Foo',
@@ -84,7 +84,7 @@ $settings = array(
             ),
             array(
                 'id' => 'my_radio_id',
-                'title' => __( 'Radio', $namespace ),
+                'title' => 'Radio',
                 'type' => 'radio',
                 'options' => array(
                     'foo' => 'Foo',
@@ -93,55 +93,55 @@ $settings = array(
             ),
             array(
                 'id' => 'my_id',
-                'title' => __( 'Text Field', $namespace ),
+                'title' => 'Text Field',
                 'type' => 'text',
                 'desc' => 'This is a default text field, it supports any type of value.'
             ),
             array(
                 'id' => 'my_id_url',
-                'title' => __( 'URL Field', $namespace ),
+                'title' => 'URL Field',
                 'type' => 'url',
                 'desc' => 'This is a default URL field, type: url, sanitize: esc_url.'
             ),
             array(
                 'id' => 'my_id_email',
-                'title' => __( 'Email Field', $namespace ),
+                'title' => 'Email Field',
                 'type' => 'email',
                 'desc' => 'This is a default email field, type: email, sanitize: sanitize_email.'
             ),
             array(
                 'id' => 'my_id_hidden',
-                'title' => __( 'Hidden Field', $namespace ),
+                'title' => 'Hidden Field',
                 'type' => 'hidden',
                 'desc' => 'This is hidden, you can\'t see it unless you view the html source.'
             ),
             array(
                 'id' => 'my_textarea_id',
-                'title' => __( 'Textarea', $namespace ),
+                'title' => 'Textarea',
                 'type' => 'textarea',
                 'desc' => 'Default textarea, sanitize: esc_textarea.'
             ),
             array(
                 'id' => 'my_textarea_id_css',
-                'title' => __( 'CSS Textarea', $namespace ),
+                'title' => 'CSS Textarea',
                 'type' => 'css_textarea',
                 'desc' => "Default textarea, sanitize: wp_kses( '' )."
             ),
             array(
                 'id' => 'my_textarea_id_email',
-                'title' => __( 'Email Textarea', $namespace ),
+                'title' => 'Email Textarea',
                 'type' => 'textarea_emails',
                 'desc' => "Custom textarea, supports only valid emails, and forward slashed comments, i.e., '//'."
             ),
             array(
                 'id' => 'my_textarea_id_ips',
-                'title' => __( 'IP Textarea', $namespace ),
+                'title' => 'IP Textarea',
                 'type' => 'textarea_ip',
                 'desc' => "Custom textarea, supports only valid IP address, sanitize: sanitize_ip)."
             ),
             array(
                 'id' => 'any_id',
-                'title' => __( 'Select', $namespace ),
+                'title' => 'Select',
                 'type' => 'select',
                 'desc' => '<p>This is a sample select, with options. The options are passed in using the <code>options</code> key, with an assigned array like the following; <code>array( [0] =>"", [2] => Sample Page )</code></p>',
                 'options' => array(
