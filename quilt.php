@@ -182,7 +182,8 @@ Class Quilt Extends Lumber {
                     'options'     => isset( $field['options'] ) ? $field['options'] : '',
                     'name'        => $this->namespace . '[' . $field_id . ']',
                     'title'       => '',
-                    'namespace'   => $this->namespace
+                    'namespace'   => $this->namespace,
+                    'settings_id' => $field_id
                 ) );
 
                 $title = isset( $field['title'] ) ? $field['title'] : '';
@@ -547,16 +548,20 @@ Class Quilt Extends Lumber {
                         break;
                 }
 
+
                 // Sanitize by type
                 if ( ! empty( $input[ $key ] ) ){
-                    $input[ $key ] = apply_filters( $this->filter_prefix . '_sanitize_' . $type, $input[ $key ] );
+                    $input[ $key ] = apply_filters( $this->filter_prefix . '_sanitize_' . $type, $input[ $key ], $field_id );
                 }
             }
 
-            // sanitize by key here via filter
+            // sanitize by key here via filter, i.e., all type="text" fields
             if ( ! empty( $input[ $key ] ) ){
-                $input[ $key ] = apply_filters( $this->filter_prefix . '_sanitize_' . $key, $input[ $key ] );
+                $input[ $key ] = apply_filters( $this->filter_prefix . '_sanitize_' . $key, $input[ $key ], $field_id );
             }
+
+            // Sanitize by field id
+            // $input[ $key ] = apply_filters( $this->filter_prefix . '_sanitize_' . $field_id, $input[ $key ], $field_id );
 
         }
 
@@ -642,7 +647,15 @@ Class Quilt Extends Lumber {
     public function doLicense( $args ) {
 
         // Use this to pass in the license data
-        $args = apply_filters( $this->filter_prefix . '_license_args', $args );
+        // Namespace specific
+        $args = apply_filters( $this->app . '_' . $args['settings_id'] . '_license_args', $args );
+
+
+        if ( empty( $args['store_info'] ) ){
+            $data = '';
+        } else {
+            $data = json_encode( $args['store_info'] );
+        }
 
         $button_text = __('Activate', $this->namespace );
         $status_text = null;
@@ -664,7 +677,7 @@ Class Quilt Extends Lumber {
          * Display our input field
          */
         ?>
-        <input type="text" placeholder="<?php esc_attr_e( $args['std'] ); ?>" class="regular-text" id="<?php echo $args['id']; ?>" name="<?php echo $args['name']; ?>" value="<?php echo $args['value']; ?>"/>
+        <input type="text" placeholder="<?php esc_attr_e( $args['std'] ); ?>" class="zm_license_field regular-text" id="<?php echo $args['id']; ?>" name="<?php echo $args['name']; ?>" value="<?php echo $args['value']; ?>"/>
         <label for="<?php echo $args['id']; ?>"><?php echo $args['desc']; ?></label>
 
         <?php
@@ -677,9 +690,18 @@ Class Quilt Extends Lumber {
             <input type="hidden" name="<?php echo $this->namespace; ?>[license_action]" id="zm_license_action" value="" />
             <input type="hidden" name="<?php echo $this->namespace; ?>[previous_license]" id="zm_previous_license" value="<?php echo $args['value']; ?>" />
 
-            <input type="button" name="<?php echo $this->namespace; ?>_license_activate_button" data-zm_license_action="<?php echo $action; ?>" id="zm_license_activate_button" class="button" value="<?php echo $button_text; ?>" />
-            <?php echo $status_text; ?>
-            <?php do_action( $this->action_prefix . '_below_license' ); ?>
+            <input
+            type="button"
+            name="<?php echo $this->namespace; ?>_license_activate_button"
+            data-zm_license_action="<?php echo $action; ?>"
+            data-zm_license_store_info='<?php echo $data; ?>'
+            id="zm_license_activate_button_<?php echo $args['id']; ?>"
+            class="zm_license_button button"
+            value="<?php echo $button_text; ?>"
+            />
+
+            <?php do_action( $this->app . '_' . $args['settings_id'] . '_below_license', $args['settings_id'] ); ?>
+
         <?php endif; ?>
         <?php
     }
