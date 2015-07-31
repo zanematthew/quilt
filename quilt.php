@@ -324,6 +324,9 @@ Class Quilt Extends Lumber {
                     <?php settings_fields( $this->namespace ); ?>
                     <?php do_settings_fields( $this->namespace . '_' . $current_tab, $this->namespace . '_' . $current_tab ); ?>
                 </table>
+
+                <?php do_action( $this->namespace . '_' . $current_tab ); ?>
+
                 <hr >
                 <div class="footer">
                     <p class="description"><?php echo $description; ?></p>
