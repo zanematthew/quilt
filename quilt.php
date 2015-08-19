@@ -12,7 +12,7 @@ Class Quilt Extends Lumber {
      *
      * @since 1.0.0
      */
-    public $version = '1.0.0';
+    public $version = '1.0.1';
 
 
     /**
@@ -546,6 +546,10 @@ Class Quilt Extends Lumber {
                         $input[ $key ] = $this->sanitizeTouchtime( $value );
                         break;
 
+                    case 'roleToPage' :
+                        $input[ $key ] = $this->sanitizeRoleToPage( $value );
+                        break;
+
                     default:
                         $input[ $key ] = $this->sanitizeDefault( $value );
                         break;
@@ -599,6 +603,24 @@ Class Quilt Extends Lumber {
 
     }
 
+
+    /**
+     * Sanitize the role page ID to only be an absolute integer
+     *
+     * @since 1.0.1
+     * @param $input (array) An array of values
+     * @return The array with any non-absolute integers removed
+     */
+    public function sanitizeRoleToPage( $input=null ){
+
+        foreach( $input as $k => $v ){
+            if ( ! empty( $v ) ){
+                $input[ $k ] = absint( $v );
+            }
+        }
+
+        return $input;
+    }
 
     /**
      * Missing callback
