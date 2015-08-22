@@ -743,7 +743,7 @@ Class Quilt Extends Lumber {
 
         $screen = get_current_screen();
 
-        $styles = array(
+        $styles = apply_filters( $this->filter_prefix . '_admin_styles', array(
             array(
                 'handle' => $this->app . '-admin-style',
                 'src' => apply_filters( $this->filter_prefix . '_admin_style', $this->app_url . 'assets/stylesheets/admin.css' ),
@@ -751,7 +751,7 @@ Class Quilt Extends Lumber {
                 'ver' => $this->version,
                 'media' => ''
             )
-        );
+        ) );
 
         foreach( $styles as $style ){
             wp_enqueue_style( $style['handle'], $style['src'], $style['deps'], $style['ver'], $style['media'] );
