@@ -317,6 +317,7 @@ Class Quilt Extends Lumber {
             <div id="icon-options-general" class="icon32"><br></div>
             <h2><?php echo $this->namespaceToPageTitle(); ?></h2>
             <?php echo $below_title; ?>
+            <?php do_action( $this->filter_prefix . '_above_form' ); ?>
             <form action="options.php" method="POST" id="<?php echo $this->namespace; ?>_settings_form" class="<?php echo $this->namespace; ?> <?php echo $current_tab; ?>-settings" data-namespace="<?php echo $this->namespace; ?>">
                 <?php echo $tabs; ?>
                 <?php echo $below_tabs; ?>
@@ -478,9 +479,6 @@ Class Quilt Extends Lumber {
      * @since 1.0.0
      */
     public function sanitizeSingle( $input=array() ){
-
-        if ( empty( $_POST['_wp_http_referer'] ) )
-            return;
 
         $settings = $this->settings();
         $tab = $this->getTab();
@@ -787,7 +785,8 @@ Class Quilt Extends Lumber {
     public function getTab(){
 
         // If we have a referrer tab
-        parse_str( $_POST['_wp_http_referer'], $referrer );
+        if ( isset( $_POST['_wp_http_referer'] ) )
+            parse_str( $_POST['_wp_http_referer'], $referrer );
 
         if ( isset( $referrer['tab'] ) ){
             $tab = $referrer['tab'];
