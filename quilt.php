@@ -12,7 +12,7 @@ Class Quilt Extends Lumber {
      *
      * @since 1.0.0
      */
-    public $version = '1.0.1';
+    public $version = '1.0.2';
 
 
     /**
