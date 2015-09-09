@@ -12,6 +12,7 @@ This will handle;
 1. Admin notices.
 1. Display settings as a single page or tab interface.
 1. Sanitizing.
+1. Tabbed based settings, or single page based settings.
 
 
 # Supported Fields
