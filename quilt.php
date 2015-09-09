@@ -1,5 +1,23 @@
 <?php
 
+/**
+ * Quilt -- Yet another WordPress Settings API wrapper. Why?
+ *
+ * Description -- View the README.md
+ *
+ * This will handle;
+ *
+ *      1. Form submission.
+ *      2. Admin notices.
+ *      3. Display settings as a single page or tab interface.
+ *      4. Sanitizing.
+ *
+ * License:     GPLv2 or later (of-course)
+ * License URI: http://www.gnu.org/licenses/gpl-2.0.html
+ *
+ * Author:      Zane M. Kolnik
+ */
+
 if ( ! class_exists( 'Quilt' ) ) :
 Class Quilt Extends Lumber {
 
