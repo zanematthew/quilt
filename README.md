@@ -1,6 +1,6 @@
 # Quilt
 
-Yet another WordPress Settings API wrapper. Why?
+Yet another WordPress Settings API wrapper. [Why](http://zanematthew.com/a-wordpress-settings-api-wrapper/)?
 
 # Description
 
@@ -19,35 +19,35 @@ This will handle;
 
 Quilt allows you to easily create the following WordPress admin settings field types.
 
-* Button
-* Canada State Select
-* Checkbox
-* Checkboxes
-* Email
-* Fancy Text
-* Fancy Select
-* Fieldset
-* Hidden
-* HTML
-* License
-* Multi-select
-* Mexico State Select
-* Number
-* Radio
-* Role To Page
-* Section
-* Select
-* Text
-* Text Disabled
-* Textarea
-* Textarea CSS
-* Textarea Emails
-* Textarea IP addresses
-* Thickbox
-* Touchtime
-* URL
-* Upload
-* US State Select
+* button
+* canadaStateSelect
+* checkbox
+* checkboxes
+* email
+* fancyText
+* fancySelect
+* fieldset
+* hidden
+* html
+* license
+* multiselect
+* mexicoStateSelect
+* number
+* radio
+* roleToPage
+* section
+* select
+* text
+* textDisabled
+* textarea
+* css
+* emails
+* ips
+* thickbox
+* touchtime
+* url
+* upload
+* usStateSelect
 
 *Each field is sanitized accordingly using the WordPress settings API with custom sanitize callbacks.*
 
@@ -55,11 +55,37 @@ Quilt allows you to easily create the following WordPress admin settings field t
 
 **Full working example**
 
-1. Download the `quilt-plugin.zip` file.
+1. Download the [zip](https://github.com/zanematthew/quilt-sample-plugin/archive/master.zip) file from the [Quilt Sample Plugin](https://github.com/zanematthew/quilt-sample-plugin) repository.
 2. Install the plugin.
 4. Under "Settings" see the sub-menu link named "Quilt Plugin", click that.
 
-## Usage -- Detail
+## Usage -- A single form field
+
+A single form field entry can consists of:
+
+```
+$field = array(
+    'id'          => HTML ID
+    'title'       => HTML Label
+    'type'        => HTML field type
+    'value'       => Value to set
+    'std'         => The default value
+    'placeholder' => HTML Placeholder
+    'options'     => An array of options
+    )
+```
+
+At minimum an entry only needs type, and title.
+
+```
+array(
+    'title' => HTML Label
+    'type'  => HTML field type
+    )
+```
+
+
+## Usage -- A full example
 
 1. Require the two classes
 2. Call the class
