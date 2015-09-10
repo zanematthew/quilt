@@ -1,0 +1,57 @@
+.form-table th,
+.form-table td {}
+
+.log-container {
+    border: 1px solid #CCC;
+    margin-bottom: 1em;
+    }
+
+.log-title {
+    background: #EEE;
+    border-bottom: 1px solid #CCC;
+    text-shadow: 0 1px 1px #fff;
+    margin: 0;
+    text-align: left;
+    padding: 10px 15px;
+    }
+
+.log-data {
+    background: #eee;
+    max-height: 700px;
+    overflow-y: auto;
+    }
+
+.log-data ol {
+    margin: 0 0 0 40px;
+    border-left: 1px solid #CCC;
+    background: white;
+    }
+
+.log-data ol li {
+    color: #888;
+    margin: 0;
+    padding: 2px 0;
+    font-size: 12px;
+    border-bottom: 1px solid rgba(136, 136, 136, 0.10);
+    }
+
+.log-data ol li:hover {
+    background: rgba(253, 255, 192, 0.67);
+    }
+
+.log-data ol li p {
+    margin: 0;
+    color: #333;
+    font-size: 12px;
+    line-height: 24px;
+    padding-left: 10px;
+    }
+
+.wp-core-ui .button-restore-default {
+    margin-left: 20px;
+    float: right;
+    }
+
+.footer .description {
+    margin-bottom: 30px;
+    }
