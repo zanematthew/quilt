@@ -454,12 +454,11 @@ Class Quilt Extends Lumber {
     public function getSaneOptions(){
 
         $options = $this->getOptions();
-        $defaults = $this->getDefaultOptions();
 
         if ( empty( $options ) ){
             $options = $this->getDefaultOptions();
         } else {
-            $options = array_merge( $defaults, $options );
+            $options = array_merge( $this->getDefaultOptions(), $options );
         }
 
         return $options;
