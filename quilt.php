@@ -614,7 +614,7 @@ Class Quilt Extends Lumber {
      */
     public function sanitizeDefault( $input=null ){
 
-        return esc_attr( $input );
+        return esc_attr( trim( $input ) );
 
     }
 
