@@ -154,9 +154,10 @@ Class Quilt Extends Lumber {
      */
     public function registerSettings(){
 
-        $options = $this->getSaneOptions();
+        $settings = $this->settings();
+        $options = $this->getSaneOptions( $settings );
 
-        foreach( $this->settings() as $id => $section ) {
+        foreach( $settings as $id => $section ) {
 
             add_settings_section(
                 $this->namespace . '_' . $id, // ID
@@ -279,8 +280,9 @@ Class Quilt Extends Lumber {
         $tab = isset( $_GET['tab'] ) ? $_GET['tab'] : null;
         $current_tab = false;
         $tab_ids = array();
+        $settings = $this->settings();
 
-        foreach( $this->settings() as $id => $section ){
+        foreach( $settings as $id => $section ){
             if ( isset( $tab ) && $tab == $id ){
                 $current_tab = $id;
             }
@@ -293,7 +295,7 @@ Class Quilt Extends Lumber {
 
         // We have a single tab instance, no need to use tabs
         if ( count( $tab_ids ) == 1 ) {
-            $tabs = $this->settings();
+            $tabs = $settings;
 
             $title = '<h3>' . $tabs[ $current_tab ]['title'] . '</h3>';
             $desc = empty( $tabs[ $current_tab ]['desc'] ) ? null : '<p>' . $tabs[ $current_tab ]['desc'] . '</p>';
@@ -305,7 +307,7 @@ Class Quilt Extends Lumber {
         // We have multiple settings, lets build tabs
         else {
             $tabs = null;
-            foreach( $this->settings() as $id => $section ){
+            foreach( $settings as $id => $section ){
                 $tab_url = add_query_arg( array(
                     'settings-updated' => false,
                     'tab' => $id
@@ -385,11 +387,14 @@ Class Quilt Extends Lumber {
      * @return The formatted and filtered array
      *
      */
-    public function getDefaultOptions(){
+    public function getDefaultOptions( $settings=null ){
 
         $defaults = array();
 
-        foreach( $this->settings() as $k => $v ){
+        if ( empty( $settings ) )
+            return $defaults;
+
+        foreach( $settings as $k => $v ){
             foreach( $v['fields'] as $field ){
                 $field_id = $this->getFieldId( $field );
                 if ( isset( $field['std'] ) ){
@@ -451,14 +456,14 @@ Class Quilt Extends Lumber {
      * @since 1.0.0
      * @return Associative array containing options from DB and defaults.
      */
-    public function getSaneOptions(){
+    public function getSaneOptions( $settings=null ){
 
         $options = $this->getOptions();
 
         if ( empty( $options ) ){
-            $options = $this->getDefaultOptions();
+            $options = $this->getDefaultOptions( $settings );
         } else {
-            $options = array_merge( $this->getDefaultOptions(), $options );
+            $options = array_merge( $this->getDefaultOptions( $settings ), $options );
         }
 
         return $options;
@@ -475,7 +480,7 @@ Class Quilt Extends Lumber {
      */
     public function getSaneOption( $key='', $default=false ) {
 
-        $options = $this->getSaneOptions();
+        $options = $this->getSaneOptions( $this->settings() );
 
         $value = ! empty( $options[ $key ] ) ? $options[ $key ] : $default;
         $value = apply_filters( $this->filter_prefix . '_get_option', $value, $key, $default );
@@ -588,7 +593,7 @@ Class Quilt Extends Lumber {
         }
 
         // Loop through the whitelist and unset any that are empty for the tab being saved
-        $options = $this->getSaneOptions();
+        $options = $this->getSaneOptions( $settings );
 
         if ( ! empty( $settings[ $tab ] ) ) {
             foreach ( $settings[ $tab ]['fields'] as $field ) {
